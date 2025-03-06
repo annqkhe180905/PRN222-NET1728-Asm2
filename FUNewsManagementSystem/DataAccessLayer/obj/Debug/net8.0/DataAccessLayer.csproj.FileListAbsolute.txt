@@ -12,3 +12,18 @@ D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0
 D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.pdb
 D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.genruntimeconfig.cache
 D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\ref\DataAccessLayer.dll
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.deps.json
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.runtimeconfig.json
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.dll
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\bin\Debug\net8.0\DataAccessLayer.pdb
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.csproj.AssemblyReference.cache
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.AssemblyInfoInputs.cache
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.AssemblyInfo.cs
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.csproj.CoreCompileInputs.cache
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.sourcelink.json
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.dll
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\refint\DataAccessLayer.dll
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.pdb
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\DataAccessLayer.genruntimeconfig.cache
+D:\PRN222\Project\PRN222-NET1728-Asm2\FUNewsManagementSystem\DataAccessLayer\obj\Debug\net8.0\ref\DataAccessLayer.dll

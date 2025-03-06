@@ -1,16 +1,19 @@
-using BusinessLogicLayer.Mapper;
+﻿using BusinessLogicLayer.Mapper;
+using DataAccessLayer;
 using FUNewsManagementSystem;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddAutoMapper(typeof(MapperConfiguration));
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
-builder.Services.AddAutoMapper(typeof(MapperConfiguration));
 
-builder.Services.AddApplicationServices();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
