@@ -26,7 +26,7 @@ public partial class FunewsManagementContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(local); Database=FUNewsManagement; Uid=sa; Pwd=12345; TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=(local); Database=FUNewsManagement; Uid=sa; Pwd=12345; TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +55,7 @@ public partial class FunewsManagementContext : DbContext
             entity.Property(e => e.CreatedById).HasColumnName("CreatedByID");
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Headline).HasMaxLength(150);
+            entity.Property(e => e.ImgUrl).HasMaxLength(255);
             entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
             entity.Property(e => e.NewsContent).HasMaxLength(4000);
             entity.Property(e => e.NewsSource).HasMaxLength(400);
@@ -105,6 +106,7 @@ public partial class FunewsManagementContext : DbContext
             entity.Property(e => e.AccountEmail).HasMaxLength(70);
             entity.Property(e => e.AccountName).HasMaxLength(100);
             entity.Property(e => e.AccountPassword).HasMaxLength(70);
+            entity.Property(e => e.ImgUrl).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Tag>(entity =>
