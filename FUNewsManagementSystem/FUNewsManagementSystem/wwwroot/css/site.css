@@ -1,22 +1,191 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+    font-family: 'Roboto', sans-serif;
+    background-image: url('/img/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
 }
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2); 
+        z-index: -1;
+    }
+
+
+    .nav-fixed .topnav {
+    z-index: 1039;
+}
+
+.nav-fixed .topnav {
+    z-index: 1039;
+}
+
+fixed .topnav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+
+.topnav {
+    padding-left: 0;
+    height: 3rem;
+    font-size: 0.9rem;
+    background-color: rgba(243, 210, 215, 0.3);
+}
+
+    .topnav .navbar-brand {
+        width: 15rem;
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .topnav.navbar-light .navbar-brand {
+        color: #363d47;
+    }
+
+.navbar {
+    height: 3.625rem;
+    font-size: 0.9rem;
+    padding: 2rem;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    white-space: nowrap !important;
+    word-break: normal !important;
+}
+
+.navbar .form-inline {
+    flex-grow: 1;
+    max-width: 300px;
+}
+.nav-link {
+    font-weight: 600; 
+    color: #FEE7C2; 
+    text-decoration: none; 
+    font-size: 1.2rem;
+    padding: 5px 10px; 
+    transition: color 0.3s ease-in-out;
+}
+
+    .nav-link:hover {
+        color: #FAA950; 
+    }
+
+.logout-btn {
+    background: #FB954A;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight:bold;
+}
+    .logout-btn:hover {
+        background: #FCC359;
+    }
+
+.card-custom {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: rgba(255, 245, 247, 0.6);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.container-custom {
+    background-color: rgba(243, 210, 215, 0.4);
+    padding: 20px;
+    border-radius: 15px;
+    height: 90vh; 
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.card-custom {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    background-color: rgba(255, 245, 247, 0.6);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.card-outside-custom {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    background-color: rgba(255, 188, 198, 0.3);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.card-title {
+    font-weight: bold;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-wrap: break-word;
+    white-space: normal; 
+    max-height: 3.2em; 
+}
+
+.card-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-wrap: break-word;
+    white-space: normal; 
+    max-height: 2.8em;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.created-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+    text-align: left;
+}
+
+.card-body .mt-auto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.card-img-top {
+    height: 200px; 
+    object-fit: cover; 
+    width: 100%; 
+}
+
+
+
