@@ -15,5 +15,9 @@ public partial class SystemAccount
 
     public string? AccountPassword { get; set; }
 
+    public string? ImgUrl { get; set; }
+
+    public bool? Status { get; set; }
+
     public virtual ICollection<NewsArticle> NewsArticles { get; set; } = new List<NewsArticle>();
 }
