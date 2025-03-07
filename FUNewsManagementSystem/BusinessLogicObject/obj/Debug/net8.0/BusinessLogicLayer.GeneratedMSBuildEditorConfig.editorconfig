@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = BusinessLogicLayer
-build_property.ProjectDir = D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\BusinessLogicObject\
+build_property.ProjectDir = D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

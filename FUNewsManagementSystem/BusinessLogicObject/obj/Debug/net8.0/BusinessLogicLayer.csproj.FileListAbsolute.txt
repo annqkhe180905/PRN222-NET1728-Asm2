@@ -13,3 +13,19 @@ D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\ne
 D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\net8.0\DataAccessLayer.pdb
 D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.csproj.AssemblyReference.cache
 D:\FPT_Semester 8\PRN221\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\Business.450209FB.Up2Date
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\net8.0\BusinessLogicLayer.deps.json
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\net8.0\BusinessLogicLayer.dll
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\net8.0\BusinessLogicLayer.pdb
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\net8.0\DataAccessLayer.dll
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\bin\Debug\net8.0\DataAccessLayer.pdb
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.csproj.AssemblyReference.cache
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.AssemblyInfoInputs.cache
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.AssemblyInfo.cs
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.csproj.CoreCompileInputs.cache
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.sourcelink.json
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\Business.450209FB.Up2Date
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.dll
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\refint\BusinessLogicLayer.dll
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\BusinessLogicLayer.pdb
+D:\01.Study\03.Prn2\asm2\PRN222-NET1728-Asm2\FUNewsManagementSystem\BusinessLogicObject\obj\Debug\net8.0\ref\BusinessLogicLayer.dll
