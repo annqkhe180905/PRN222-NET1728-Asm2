@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(MapperConfiguration));
+builder.Services.AddDbContext<FunewsManagementContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
