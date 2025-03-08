@@ -1,0 +1,83 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary: #f27024;
+    --secondary: #2c3e50;
+    --light: #ecf0f1;
+    --dark: #34495e;
+    --success: #27ae60;
+    --danger: #e74c3c;
+    --warning: #f39c12;
+    --info: #3498db;
+}
+
+.custom-container {
+    background-color: wheat;
+    height: inherit;
+    padding: 10px;
+}
+
+.stats-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.main-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 10px;
+    width: 930px;
+}
+
+.stats-icon {
+    width: 66px;
+    height: 66px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: white;
+}
+
+    .stats-icon svg {
+        width: 35px;
+        height: 35px;
+    }
+
+.icon-primary {
+    background-color: rgba(242, 112, 36, 0.15);
+    color: var(--primary);
+}
+
+
+.stats-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    color: var(--dark);
+}
+
+.stats-content p {
+    font-size: 0.85rem;
+    color: #777;
+}

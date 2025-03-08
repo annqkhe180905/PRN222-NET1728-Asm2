@@ -1,0 +1,134 @@
+﻿@page
+@model FUNewsManagementSystem.Pages.Category.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = null;
+}
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<link href="~/css/dashboard.css" rel="stylesheet" asp-append-version="true" />
+<div class="custom-container">
+    <div class="main-stats mb-4">
+        <div class="stats-card">
+            <div class="stats-icon icon-primary">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <div class="stats-content">
+                <h3>@Model.NewAriclesCount</h3>
+                <p>Tổng số bài viết</p>
+            </div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-icon icon-primary">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="stats-content">
+                <h3>@Model.AccountsCount</h3>
+                <p>Tổng số tài khoản</p>
+            </div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-icon icon-primary">
+                <i class="fa-solid fa-tag"></i>
+            </div>
+            <div class="stats-content">
+                <h3>@Model.TagsCount</h3>
+                <p>Tổng số Tag</p>
+            </div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-icon icon-primary">
+                <i class="fa-solid fa-list"></i>
+            </div>
+            <div class="stats-content">
+                <h3>@Model.CategorysCount</h3>
+                <p>Tổng số Category</p>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-card">
+        <form method="get" class="d-grid mb-3 w-100 p-4 gap-2">
+            <div class="">
+                <label>Từ ngày</label>
+                <input type="date" name="startDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="">
+                <label>Đến ngày</label>
+                <input type="date" name="endDate" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </div>
+        </form>
+        <div class="chart-container">
+            <canvas id="myChart" width="800" height="600"></canvas>
+        </div>
+    </div>
+</div>
+<style>
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .dashboard-card {
+        padding: 20px;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const dates = @Html.Raw(Json.Serialize(Model.Stats.Select(s => s.Date.ToString("yyyy-MM-dd"))));
+        const values = @Html.Raw(Json.Serialize(Model.Stats.Select(s => s.Value)));
+
+        console.log("Dates:", dates);
+        console.log("Values:", values);
+
+        const ctx = document.getElementById('myChart');
+        if (ctx) {
+            console.log("Canvas được tìm thấy.");
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Số news trong ngày',
+                            data: values,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 2,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Ngày' },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: 1
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Giá trị' },
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    })
+</script>
+
