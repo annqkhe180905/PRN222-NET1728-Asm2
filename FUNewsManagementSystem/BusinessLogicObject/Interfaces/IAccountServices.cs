@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BusinessLogicLayer.DTOs;
+using DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +11,7 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface IAccountServices
     {
+        public Task<AccountDTO> Login(string email, string password);
+        
     }
 }
