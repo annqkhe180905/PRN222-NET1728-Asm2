@@ -54,7 +54,7 @@
                                     <textarea asp-for="newCategory.CategoryDesciption" id="updateCategoryDescription" class="form-control"></textarea>
                                 </div>
                                 <div class="mb-3 form-check">
-                                    <input type="checkbox" asp-for="newCategory.IsActive" style="width:20px; height:20px;" checked />
+                                    <input type="checkbox" asp-for="newCategory.IsActive" id="updateCategoryActive" style="width:20px; height:20px;" checked />
                                     <label class="form-check-label">Active</label>
                                 </div>
                                 <button type="submit" class="btn btn-warning">Update</button>
@@ -77,7 +77,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+                            <button id="confirmDeleteBtn" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                 <tbody id="table-body-category">
                     @foreach (var category in Model.Categories)
                     {
-                        <tr>
+                        <tr id="row-@category.CategoryId">
                             <td >@category.CategoryName</td>
                             <td>@category.CategoryDesciption</td>
                             <td >

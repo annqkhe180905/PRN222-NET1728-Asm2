@@ -103,7 +103,6 @@ document.getElementById('updateCategoryModal').addEventListener('show.bs.modal',
     const updateName = button.getAttribute('data-name');
     const updateDescription = button.getAttribute('data-description');
     const updateActive = button.getAttribute('data-active') === 'True';
-
     this.querySelector('#updateCategoryId').value = updateId;
     this.querySelector('#updateCategoryName').value = updateName;
     this.querySelector('#updateCategoryDescription').value = updateDescription;
