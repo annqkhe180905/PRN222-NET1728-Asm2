@@ -62,5 +62,21 @@ namespace BusinessLogicLayer.Services
         {
             await _newsRepository.DeleteNewsAsync(newsId);
         }
+
+        public async Task<List<NewsArticleDTO>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            var list = await _newsRepository.GetNewsByDateRangeAsync(startDate, endDate);
+            return _mapper.Map<List<NewsArticleDTO>>(list);
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await _newsRepository.CountAsync();
+        }
+
+        public async Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync()
+        {
+            return await _newsRepository.GetTopAccountWithMostNewsAsync();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,8 @@ namespace DataAccessLayer.Repository
         {
             return await _context.NewsArticles
                 .Include(n => n.Category)
+                .Include(n => n.CreatedBy)
+                .Include(n => n.ModifiedDate)
                 .Include(n => n.Tags)
                 .ToListAsync();
         }
