@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FUNewsManagementSystem", "FUNewsManagementSystem\FUNewsManagementSystem.csproj", "{9A74EB84-BA5A-4903-8E6E-98E614CCB96E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FUNewsManagementSystem", "FUNewsManagementSystem\FUNewsManagementSystem.csproj", "{9A74EB84-BA5A-4903-8E6E-98E614CCB96E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicLayer", "BusinessLogicObject\BusinessLogicLayer.csproj", "{673E3F2D-F3E1-4ACF-9A51-988F3335E5E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "BusinessLogicObject\BusinessLogicLayer.csproj", "{673E3F2D-F3E1-4ACF-9A51-988F3335E5E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{DFE34A49-823A-4ED4-A32E-22D4C0D44082}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{DFE34A49-823A-4ED4-A32E-22D4C0D44082}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
