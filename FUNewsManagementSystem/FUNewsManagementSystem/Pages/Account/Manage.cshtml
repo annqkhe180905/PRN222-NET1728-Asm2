@@ -1,0 +1,166 @@
+﻿@page
+@model FUNewsManagementSystem.Pages.Account.AccountManagementModel
+@{
+    ViewData["Title"] = "Account Management";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2 class="text-danger">Account Management</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <button type="button" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#accountModal" onclick="clearForm()">
+                <i class="bi bi-plus-lg"></i> Create New Account
+            </button>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2" id="searchForm">
+        <div class="col-md-4">
+            <input type="text" id="searchName" asp-for="Name" class="form-control" placeholder="Search by Name">
+        </div>
+        <div class="col-md-4">
+            <select id="searchRole" asp-for="Role" class="form-select">
+                <option value="">All Roles</option>
+                <option value="1">Staff</option>
+                <option value="2">Lecturer</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-danger w-100 fw-bold" type="submit">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+
+
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var account in Model.Accounts)
+                {
+                    <tr>
+                        <td>@account.AccountId</td>
+                        <td>@account.AccountName</td>
+                        <td>@account.AccountEmail</td>
+                        <td>@(account.AccountRole == 1 ? "Staff" : account.AccountRole == 2 ? "Lecturer" : "Unknown")</td>
+                        <td>@account.AccountStatus</td>
+
+                        <td>
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#accountModal"
+                                    onclick="fillForm(@account.AccountId, '@account.AccountName', '@account.AccountEmail', @account.AccountRole)">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </button>
+
+                            <form method="post" asp-page-handler="Delete" class="d-inline">
+                                <input type="hidden" name="id" value="@account.AccountId" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal for Create/Edit Account -->
+<div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accountModalLabel">Create/Edit Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="accountForm" method="post">
+                    <input type="hidden" asp-for="InputAccount.AccountId" />
+
+                    <div class="mb-3">
+                        <label for="accountName" class="form-label">Name</label>
+                        <input type="text" class="form-control" asp-for="InputAccount.AccountName" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="accountEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" asp-for="InputAccount.AccountEmail" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="accountRole" class="form-label">Role</label>
+                        <select class="form-select" asp-for="InputAccount.AccountRole">
+                            <option value="1">Staff</option>
+                            <option value="2">Lecturer</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="modalSaveButton">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Chặn submit mặc định
+
+        let nameValue = document.getElementById("searchName").value.trim();
+        let roleValue = document.getElementById("searchRole").value.trim();
+
+        // Tạo URL mới với handler=Search
+        let searchUrl = window.location.pathname + "?handler=Search";
+        if (nameValue) searchUrl += `&Name=${encodeURIComponent(nameValue)}`;
+        if (roleValue) searchUrl += `&Role=${encodeURIComponent(roleValue)}`;
+
+        // Điều hướng đến URL mới
+        window.location.href = searchUrl;
+    });
+</script>
+
+<!-- JavaScript for Modal Actions -->
+<script>
+    function clearForm() {
+        document.getElementById("accountForm").reset();
+        document.getElementById("accountModalLabel").innerText = "Create New Account";
+        document.getElementById("accountForm").setAttribute("action", "?handler=Create");
+        document.getElementById("modalSaveButton").setAttribute("formaction", "?handler=Create");
+    }
+
+    function fillForm(id, name, email, role) {
+        document.getElementById("InputAccount_AccountId").value = id;
+        document.getElementById("InputAccount_AccountName").value = name;
+        document.getElementById("InputAccount_AccountEmail").value = email;
+        document.getElementById("InputAccount_AccountRole").value = role;
+
+        document.getElementById("accountModalLabel").innerText = "Edit Account";
+        document.getElementById("accountForm").setAttribute("action", "?handler=Edit");
+        document.getElementById("modalSaveButton").setAttribute("formaction", "?handler=Edit");
+    }
+
+</script>

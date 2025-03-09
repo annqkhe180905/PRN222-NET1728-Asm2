@@ -22,7 +22,7 @@ namespace BusinessLogicLayer.Services
         }
 
         public async Task<int> Create(CategoryDTO categoryDTO)
-        {
+        { 
             var newCategory = mapper.Map<Category>(categoryDTO);
             return await categoryRepository.Create(newCategory);
         }
