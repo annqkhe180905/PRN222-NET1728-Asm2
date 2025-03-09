@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccessLayer.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace DataAccessLayer.Interfaces
 {
     public interface ITagRepository
     {
+        List<Tag> GetTags();
+        void CreateTag(Tag tag);
+        void UpdateTag(Tag tag);
+        void DeleteTag(int tagId);
     }
 }
