@@ -16,6 +16,6 @@ namespace BusinessLogicLayer.DTOs
 
         public short? ParentCategoryId { get; set; }
 
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
     }
 }

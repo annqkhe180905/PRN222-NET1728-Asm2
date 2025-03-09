@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessLogicLayer.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface ITagServices
     {
+        Task<IEnumerable<TagDTO>> GetAllTagsAsync();
     }
 }

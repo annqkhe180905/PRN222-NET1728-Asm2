@@ -1,24 +1,23 @@
 ﻿using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
-using FUNewsManagementSystem.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FUNewsManagementSystem.Pages.Staff
+namespace FUNewsManagementSystem.Pages.Category
 {
-    public class IndexModel : BasePageModel
+    public class ManagementPageModel : PageModel
     {
         private readonly ICategoryServices categoryServices;
         public List<CategoryDTO> Categories { get; set; }
         public int CurrentPage { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-        public int TotalItems { get; set; } = 10;
+        public int PageSize { get; set; } = 5;
+        public int TotalItems { get; set; } = 5;
         [BindProperty]
         public CategoryDTO newCategory { get; set; }
 
         [BindProperty]
         public int IdDelete { get; set; }
-        public IndexModel(ICategoryServices categoryServices)
+        public ManagementPageModel(ICategoryServices categoryServices)
         {
             this.categoryServices = categoryServices;
         }

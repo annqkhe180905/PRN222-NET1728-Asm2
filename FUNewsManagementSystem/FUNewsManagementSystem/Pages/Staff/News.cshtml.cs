@@ -17,13 +17,13 @@ namespace FUNewsManagementSystem.Pages.Staff
     public class NewsModel : BasePageModel
     {
         private readonly INewsArticleServices _newsService;
-        private readonly ITagRepository _tagRepository;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagServices _tagService;
+        private readonly ICategoryServices _categoryService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public List<NewsArticleDTO> NewsList { get; set; } = new();
-        public List<Category> Categories { get; set; } = new();
-        public List<Tag> Tags { get; set; } = new();
+        public List<NewsArticleDTO> NewsList { get; set; } = new List<NewsArticleDTO>();
+        public List<CategoryDTO> Categories { get; set; } = new List<CategoryDTO>();
+        public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
 
         public NewsModel(INewsArticleServices newsService, IWebHostEnvironment webHostEnvironment)
         {
@@ -42,8 +42,8 @@ namespace FUNewsManagementSystem.Pages.Staff
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Tags = (await _tagRepository.GetAllTagsAsync()).ToList();
-            Categories = (await _categoryRepository.GetAllCategoriesAsync()).ToList();
+            Tags = (await _tagService.GetAllTagsAsync()).ToList();
+            Categories = (await _categoryService.GetCategories()).ToList();
             NewsList = await _newsService.SearchNewsAsync(SearchQuery);
             return Page();
         }
