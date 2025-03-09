@@ -4,17 +4,14 @@ using BusinessLogicLayer.Interfaces;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Net.Http;
-
 
 namespace BusinessLogicLayer.Services
 {
@@ -31,6 +28,12 @@ namespace BusinessLogicLayer.Services
             _mapper = mapper;
         }
 
+     public async Task AddAccount(AccountDTO account)
+   {
+       var newAccount = _mapper.Map<SystemAccount>(account);
+       await _accountRepository.AddAccount(newAccount);
+   }
+        
         public async Task<int> CountAsync()
         {
             return await _accountRepository.CountAsync();
@@ -43,27 +46,32 @@ namespace BusinessLogicLayer.Services
 
         public Task DeleteAccountAsync(short id)
         {
-            throw new NotImplementedException();
+            var newAccount = _mapper.Map<SystemAccount>(account);
+            await _accountRepository.AddAccount(newAccount);
         }
 
-        public Task<AccountDTO> DisableAccount(short id)
+        public async Task DeleteAccount(short id)
         {
-            throw new NotImplementedException();
+            await _accountRepository.DeleteAccount(id);
         }
 
-        public Task<AccountDTO> GetAccountByEmailAsync(string email)
+        public async Task<AccountDTO> GetAccountById(short id)
         {
-            throw new NotImplementedException();
+            var account = await _accountRepository.GetAccountById(id);
+            return _mapper.Map<AccountDTO>(account);
         }
 
-        public Task<AccountDTO> GetAccountByIdAsync(short accountId)
+        public async Task<List<AccountDTO>> GetSystemAccounts()
         {
-            throw new NotImplementedException();
+            var accounts = await _accountRepository.GetSystemAccounts();
+            return _mapper.Map<List<AccountDTO>>(accounts);
         }
 
-        public Task<List<AccountDTO>> GetAllAccountsAsync()
+        public async Task UpdateAccount(AccountDTO account)
         {
-            throw new NotImplementedException();
+            var updatedAccount = _mapper.Map<SystemAccount>(account);
+            await _accountRepository.UpdateAccount(updatedAccount);
+
         }
 
         public async Task<List<(string AccountName, int Count)>> GetListTopAccountCreatedNewsAsync()
@@ -83,7 +91,8 @@ namespace BusinessLogicLayer.Services
 
         public async Task<AccountDTO> Login(string email, string password)
         {
-            if (email.IsNullOrEmpty() || password.IsNullOrEmpty()) return null;
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return null;
+
             if (email == _adminAccount.Email && password == _adminAccount.Password)
             {
                 return new AccountDTO
@@ -94,10 +103,10 @@ namespace BusinessLogicLayer.Services
                     AccountRole = 0,
                 };
             }
-            var user = await _accountRepository.Login(email);
-            if (user == null) return null;
 
-            if (user.AccountPassword != password) return null;
+            var user = await _accountRepository.Login(email);
+            if (user == null || user.AccountPassword != password) return null;
+
             return _mapper.Map<AccountDTO>(user);
         }
 
@@ -115,5 +124,12 @@ namespace BusinessLogicLayer.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<AccountDTO> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        
     }
 }
