@@ -9,5 +9,6 @@ namespace BusinessLogicLayer.Services
 {
     public class TagServices : ITagServices
     {
+
     }
 }
