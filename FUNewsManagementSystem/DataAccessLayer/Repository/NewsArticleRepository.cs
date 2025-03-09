@@ -32,64 +32,47 @@ namespace DataAccessLayer.Repository
         {
             return await _context.NewsArticles
                 .Include(n => n.Category)
-                .Include(n => n.CreatedBy)
-                .Include(n => n.ModifiedDate)
                 .Include(n => n.Tags)
                 .ToListAsync();
         }
 
-        public async Task<NewsArticle?> GetByIdAsync(string newsArticleId)
+        public async Task<NewsArticle?> GetNewsByIdAsync(string newsId)
         {
-            return await _context.NewsArticles.Include(n => n.Category)
-                                              .Include(n => n.Tags)
-                                              .FirstOrDefaultAsync(n => n.NewsArticleId == newsArticleId);
+            return await _context.NewsArticles
+                .Include(n => n.Category)
+                .Include(n => n.Tags)
+                .FirstOrDefaultAsync(n => n.NewsArticleId == newsId);
         }
 
-        public async Task AddAsync(NewsArticle newsArticle)
+        public async Task<List<NewsArticle>> SearchNewsAsync(string query)
         {
-            await _context.NewsArticles.AddAsync(newsArticle);
+            return await _context.NewsArticles
+                .Where(n => n.NewsTitle.Contains(query) || n.Headline.Contains(query))
+                .Include(n => n.Category)
+                .Include(n => n.Tags)
+                .ToListAsync();
+        }
+
+        public async Task CreateNewsAsync(NewsArticle news)
+        {
+            _context.NewsArticles.Add(news);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(NewsArticle newsArticle)
+        public async Task UpdateNewsAsync(NewsArticle news)
         {
-            _context.NewsArticles.Update(newsArticle);
+            _context.NewsArticles.Update(news);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteNewsAsync(string newsId)
         {
-            var newsArticle = await GetByIdAsync(id);
-            _context.NewsArticles.Remove(newsArticle);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<NewsArticle>> SearchAsync(string keyword, short? categoryId, int[]? tagIds)
-        {
-            var query = _context.NewsArticles.Include(n => n.Category)
-                                             .Include(n => n.Tags)
-                                             .AsQueryable();
-
-            if (!string.IsNullOrEmpty(keyword))
-                query = query.Where(n => n.NewsTitle.Contains(keyword) || n.Headline.Contains(keyword));
-
-            if (categoryId.HasValue)
-                query = query.Where(n => n.CategoryId == categoryId.Value);
-
-            if (tagIds != null && tagIds.Any())
-                query = query.Where(n => n.Tags.Any(t => tagIds.Contains(t.TagId)));
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<IEnumerable<NewsArticle>> GetNewsHistoryByStaffIdAsync(short staffId)
-        {
-            return await _context.NewsArticles.Where(n => n.CreatedById == staffId).ToListAsync();
-        }
-
-        public async Task<IEnumerable<NewsArticle>> GetActiveNewsForLecturersAsync()
-        {
-            return await _context.NewsArticles.Where(n => n.NewsStatus == true).ToListAsync();
+            var news = await _context.NewsArticles.FindAsync(newsId);
+            if (news != null)
+            {
+                _context.NewsArticles.Remove(news);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

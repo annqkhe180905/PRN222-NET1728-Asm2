@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const fileInput = document.getElementById("newsImage");
     const previewImage = document.getElementById("previewImage");
 
-    // Hiển thị ảnh xem trước
+    // Preview image functionality
     fileInput.addEventListener("change", function () {
         const file = fileInput.files[0];
         if (file) {
@@ -37,35 +37,122 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Xử lý submit form (tạo hoặc cập nhật bài viết)
+    // Form submission handling
     form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Ngăn form submit mặc định
+        event.preventDefault();
 
         const formData = new FormData(form);
-        const file = fileInput.files[0];
+        const isUpdate = document.getElementById("newsId").value !== "";
+        const url = isUpdate ? "?handler=Update" : "?handler=Create";
 
-        if (file) {
-            formData.append("newsImage", file);
-        }
-
-        const isUpdate = form.dataset.action === "update"; // Kiểm tra đang tạo hay cập nhật
-        const url = isUpdate ? "/News/OnPostUpdateAsync" : "/News/OnPostCreateAsync";
+        // Get the anti-forgery token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
         fetch(url, {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {
+                "RequestVerificationToken": token
+            }
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    alert(isUpdate ? "Update successfully!" : "Create successfully");
-                    window.location.reload(); // Reload lại trang sau khi xử lý xong
-                } else {
-                    alert("An error occured!");
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
+                return response.json();
             })
-            .catch(error => console.error("Error sending data:", error));
+            .then(data => {
+                alert(isUpdate ? "Update successfully!" : "Create successfully");
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred!");
+            });
+    });
+
+    // Initialize event handlers for action buttons
+    document.querySelectorAll(".btn-warning").forEach(button => {
+        button.addEventListener("click", function () {
+            const id = this.getAttribute("data-id");
+            openEditModal(id);
+        });
+    });
+
+    document.querySelectorAll(".btn-danger").forEach(button => {
+        button.addEventListener("click", function () {
+            const id = this.getAttribute("data-id");
+            openDeleteModal(id);
+        });
     });
 });
+
+// Define these functions outside the DOMContentLoaded handler
+function openCreateModal() {
+    document.getElementById("modalTitle").textContent = "Create News Article";
+    document.getElementById("newsForm").reset();
+    document.getElementById("newsId").value = "";
+    document.getElementById("previewImage").style.display = "none";
+
+    // Show the modal using Bootstrap
+    $('#newsModal').modal('show');
+}
+
+function openEditModal(id) {
+    fetch(`?handler=GetNews&id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("modalTitle").textContent = "Edit News Article";
+            document.getElementById("newsId").value = data.newsArticleId;
+            document.getElementById("newsTitle").value = data.newsTitle;
+            document.getElementById("headline").value = data.headline;
+
+            if (data.imgUrl) {
+                document.getElementById("previewImage").src = data.imgUrl;
+                document.getElementById("previewImage").style.display = "block";
+                document.getElementById("newsImageUrl").value = data.imgUrl;
+            }
+
+            // Show the modal using Bootstrap
+            $('#newsModal').modal('show');
+        })
+        .catch(error => {
+            console.error("Error fetching news:", error);
+            alert("Error loading news article data");
+        });
+}
+
+function openDeleteModal(id) {
+    if (confirm("Are you sure you want to delete this article?")) {
+        deleteNews(id);
+    }
+}
+
+function deleteNews(id) {
+    // Get the anti-forgery token
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    fetch("?handler=Delete", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": token
+        },
+        body: JSON.stringify(id)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to delete");
+            }
+            return response.json();
+        })
+        .then(() => {
+            document.getElementById(`newsRow_${id}`).remove();
+        })
+        .catch(error => {
+            console.error("Error deleting news:", error);
+            alert("Error deleting news article");
+        });
+}
 
 //FINISH UPLOAD IMAGE

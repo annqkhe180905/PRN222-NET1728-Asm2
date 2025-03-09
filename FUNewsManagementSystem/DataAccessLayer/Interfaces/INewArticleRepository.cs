@@ -11,13 +11,11 @@ namespace DataAccessLayer.Interfaces
     {
         Task<IEnumerable<NewsArticle>> GetAllActiveArticles();
         Task<List<NewsArticle>> GetAllNewsAsync();
-        Task<NewsArticle?> GetByIdAsync(string newsArticleId);
-        Task AddAsync(NewsArticle newsArticle);
-        Task UpdateAsync(NewsArticle newsArticle);
-        Task DeleteAsync(string id);
-        Task<IEnumerable<NewsArticle>> SearchAsync(string keyword, short? categoryId, int[]? tagIds);
-        Task<IEnumerable<NewsArticle>> GetNewsHistoryByStaffIdAsync(short staffId);
-        Task<IEnumerable<NewsArticle>> GetActiveNewsForLecturersAsync();
+        Task<NewsArticle?> GetNewsByIdAsync(string newsId);
+        Task<List<NewsArticle>> SearchNewsAsync(string query);
+        Task CreateNewsAsync(NewsArticle news);
+        Task UpdateNewsAsync(NewsArticle news);
+        Task DeleteNewsAsync(string newsId);
 
 
     }

@@ -9,15 +9,21 @@ using System.Collections.Generic;
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using FUNewsManagementSystem.Helpers;
+using DataAccessLayer.Entities;
+using DataAccessLayer.Interfaces;
 
 namespace FUNewsManagementSystem.Pages.Staff
 {
     public class NewsModel : BasePageModel
     {
         private readonly INewsArticleServices _newsService;
+        private readonly ITagRepository _tagRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public List<NewsArticleDTO> NewsList { get; set; } = new();
+        public List<Category> Categories { get; set; } = new();
+        public List<Tag> Tags { get; set; } = new();
 
         public NewsModel(INewsArticleServices newsService, IWebHostEnvironment webHostEnvironment)
         {
@@ -31,11 +37,17 @@ namespace FUNewsManagementSystem.Pages.Staff
         [BindProperty(SupportsGet = false, Name = "newsImage")]
         public IFormFile? NewsImage { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string? SearchQuery { get; set; }
+
         public async Task<IActionResult> OnGetAsync()
         {
-            NewsList = await _newsService.GetAllNewsAsync();
+            Tags = (await _tagRepository.GetAllTagsAsync()).ToList();
+            Categories = (await _categoryRepository.GetAllCategoriesAsync()).ToList();
+            NewsList = await _newsService.SearchNewsAsync(SearchQuery);
             return Page();
         }
+
 
         public async Task<IActionResult> OnGetGetNewsAsync(string id)
         {
@@ -102,7 +114,6 @@ namespace FUNewsManagementSystem.Pages.Staff
             {
                 return BadRequest("Invalid ID.");
             }
-
             await _newsService.DeleteNewsAsync(newsId);
             return new JsonResult(new { message = "News article deleted successfully." });
         }
