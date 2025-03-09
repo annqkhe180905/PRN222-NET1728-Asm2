@@ -1,37 +1,11 @@
-﻿
-var addForm = document.getElementById('addForm');
-toastr.options = {
-    progressBar: true,
-    positionClass: "toast-top-right",
-    timeOut: 1000
-};
+﻿document.addEventListener('DOMContentLoaded', function () {
+    toastr.options = {
+        progressBar: true,
+        positionClass: "toast-top-right",
+        timeOut: 1000
+    };
 
-addForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    var formData = new FormData(addForm);
-    try {
-        const response = await fetch('?handler=Create', {
-            method: 'POST',
-            body: formData,
-        });
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                sessionStorage.setItem('notification', JSON.stringify({
-                    type: 'success',
-                    message: 'Thêm category thành công'
-                }));
-                location.reload();
-            } else {
-                toastr.error("Thêm category thất bại");
-            }
-        }
-    } catch (error) {
-        console.log(error);
-    }
-})
-
-window.addEventListener('load', () => {
+    // Display notification if stored in sessionStorage
     let notification = sessionStorage.getItem('notification');
     if (notification) {
         const { type, message } = JSON.parse(notification);
@@ -42,103 +16,123 @@ window.addEventListener('load', () => {
         }
         sessionStorage.removeItem('notification');
     }
+
+    // Initialize search filter
     initSearchFilter();
 });
-function initSearchFilter() {
-    const searchInput = document.getElementById('searchInput');
-    const rows = document.querySelectorAll('#table-body-category tr');
-    searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        rows.forEach(row => {
-            const name = row.cells[0].textContent.toLowerCase();
-            if (name.includes(searchTerm)) {
-                row.classList.remove('hidden');
-            } else {
-                row.classList.add('hidden');
-            }
-        })
-    })
 
-}
-
-let deleteId = null;
-const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-document.querySelectorAll('.btn-delete').forEach(button => {
-    button.addEventListener('click', function () {
-        deleteId = this.getAttribute('data-id');
-        deleteModal.show();
-    });
-});
-
-
-document.getElementById('updateCategoryModal').addEventListener('show.bs.modal', function (e) {
-    const button = e.relatedTarget;
-    const updateId = button.getAttribute('data-id');
-    const updateName = button.getAttribute('data-name');
-    const updateDescription = button.getAttribute('data-description');
-    const updateActive = button.getAttribute('data-active');
-
-    this.querySelector('#updateCategoryId').value = updateId;
-    this.querySelector('#updateCategoryName').value = updateName;
-    this.querySelector('#updateCategoryDescription').value = updateDescription;
-    this.querySelector('#updateCategoryActive').checked = updateActive === 'True';
-});
-
-const updateForm = document.querySelector('#updateForm');
-updateForm.addEventListener('submit', async (e) => {
+// 🔹 Add Category
+document.getElementById('addForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    const formData = new FormData(updateForm);
+    const formData = new FormData(this);
 
     try {
-        const response = await fetch('?handler=Update', {
+        const response = await fetch('?handler=Create', {
             method: 'POST',
-            body: formData,
+            body: formData
         });
         const result = await response.json();
 
         if (result.success) {
             sessionStorage.setItem('notification', JSON.stringify({
                 type: 'success',
-                message: result.message
+                message: 'Category added successfully'
             }));
             location.reload();
         } else {
-            toastr.error(result.message || 'Update failed!');
+            toastr.error('Failed to add category');
         }
     } catch (error) {
-        console.error(error);
-        toastr.error('An error occurred while updating');
+        console.error('Error adding category:', error);
+        toastr.error('An error occurred while adding category');
     }
 });
 
+// 🔹 Search Filter
+function initSearchFilter() {
+    const searchInput = document.getElementById('searchInput');
+    const rows = document.querySelectorAll('#table-body-category tr');
 
+    searchInput.addEventListener('input', function () {
+        const searchTerm = searchInput.value.toLowerCase();
+        rows.forEach(row => {
+            const name = row.querySelector('td:first-child').textContent.toLowerCase();
+            row.style.display = name.includes(searchTerm) ? "" : "none";
+        });
+    });
+}
 
+// 🔹 Open Delete Confirmation Modal
+let deleteId = null;
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('btn-delete')) {
+        deleteId = event.target.getAttribute('data-id');
+        const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        deleteModal.show();
+    }
+});
+
+// 🔹 Delete Category
 document.getElementById('confirmDeleteBtn').addEventListener('click', async function () {
     if (deleteId) {
         try {
             const response = await fetch(`?handler=Delete&id=${deleteId}`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
 
-            if (!response.ok) {
-                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-            }
             const result = await response.json();
             if (result.success) {
-                document.querySelector(`i[data-id="${deleteId}"]`).closest('tr').remove();
-                deleteModal.hide();
-                deleteId = null;
-                toastr.success('Xóa category thành công');
+                document.getElementById(`row-${deleteId}`)?.remove();
+                toastr.success('Category deleted successfully');
             } else {
-                toastr.error(result.message || 'Xóa thất bại!');
+                toastr.error('Failed to delete category');
             }
-            deleteModal.hide();
         } catch (error) {
-            console.error(error);
-            alert('Có lỗi xảy ra khi xóa: ' + error.message);
+            console.error('Error deleting category:', error);
+            toastr.error('An error occurred while deleting');
         }
+        deleteId = null;
+    }
+});
+
+// 🔹 Open Update Modal and Pre-fill Data
+document.getElementById('updateCategoryModal').addEventListener('show.bs.modal', function (e) {
+    const button = e.relatedTarget;
+    const updateId = button.getAttribute('data-id');
+    const updateName = button.getAttribute('data-name');
+    const updateDescription = button.getAttribute('data-description');
+    const updateActive = button.getAttribute('data-active') === 'True';
+
+    this.querySelector('#updateCategoryId').value = updateId;
+    this.querySelector('#updateCategoryName').value = updateName;
+    this.querySelector('#updateCategoryDescription').value = updateDescription;
+    this.querySelector('#updateCategoryActive').checked = updateActive;
+});
+
+// 🔹 Update Category
+document.getElementById('updateForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('?handler=Update', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            sessionStorage.setItem('notification', JSON.stringify({
+                type: 'success',
+                message: 'Category updated successfully'
+            }));
+            location.reload();
+        } else {
+            toastr.error('Failed to update category');
+        }
+    } catch (error) {
+        console.error('Error updating category:', error);
+        toastr.error('An error occurred while updating');
     }
 });

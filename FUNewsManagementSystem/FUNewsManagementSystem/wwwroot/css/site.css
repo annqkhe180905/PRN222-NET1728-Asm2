@@ -187,5 +187,71 @@ fixed .topnav {
     width: 100%; 
 }
 
+table {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #F9EAEC;
+}
+
+th {
+    background-color: #dc3545 !important; /* Red */
+    color: white !important;
+    text-align: center;
+}
+
+td {
+    text-align: center;
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Red */
+    border: none;
+}
+
+.btn-warning {
+    background-color: #ffc107; /* Yellow */
+    border: none;
+    color: black;
+}
+
+    .btn-danger:hover, .btn-warning:hover {
+        opacity: 0.8;
+    }
+
+.modal-header {
+    border-bottom: none;
+}
+
+.pagination-custom .page-item .page-link {
+    background-color: #dc3545; 
+    color: white; 
+    border: 1px solid #dc3545; 
+}
+
+.pagination-custom .page-item.active .page-link {
+    background-color: #a71d2a; 
+    border-color: #a71d2a;
+}
+
+.pagination-custom .page-item .page-link:hover {
+    background-color: #c82333; 
+    color: white;
+}
+.badge-active {
+    background-color: #28a745;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.badge-inactive {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+
+
 
 

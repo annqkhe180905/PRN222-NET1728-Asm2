@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
-    public class CategoryServices : ICategoryServices
-    {
-        private readonly ICategoryRepository categoryRepository;
-        private readonly IMapper mapper;
-        public CategoryServices(ICategoryRepository categoryRepository, IMapper mapper)
+        public class CategoryServices : ICategoryServices
         {
-            this.categoryRepository = categoryRepository;
-            this.mapper = mapper;
-        }
+            private readonly ICategoryRepository categoryRepository;
+            private readonly IMapper mapper;
+            public CategoryServices(ICategoryRepository categoryRepository, IMapper mapper)
+            {
+                this.categoryRepository = categoryRepository;
+                this.mapper = mapper;
+            }
 
         public async Task<int> CountAsync()
         {
@@ -32,16 +32,16 @@ namespace BusinessLogicLayer.Services
             return await categoryRepository.Create(newCategory);
         }
 
-        public async Task<bool> Delete(int id)
-        {
-            return await categoryRepository.Delete(id);
-        }
+            public async Task<bool> Delete(int id)
+            {
+                return await categoryRepository.Delete(id);
+            }
 
-        public async Task<List<CategoryDTO>> GetCategories()
-        {
-            List<Category> categories = await categoryRepository.GetAllCategory();
-            return mapper.Map<List<CategoryDTO>>(categories);
-        }
+            public async Task<List<CategoryDTO>> GetCategories()
+            {
+                List<Category> categories = await categoryRepository.GetAllCategory();
+                return mapper.Map<List<CategoryDTO>>(categories);
+            }
 
         public async Task<List<(string CategoryName, int Count)>> GetListTopCategoriesAsync()
         {

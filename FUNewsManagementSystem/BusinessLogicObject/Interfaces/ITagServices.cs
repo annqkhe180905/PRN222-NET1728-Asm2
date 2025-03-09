@@ -8,6 +8,6 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface ITagServices
     {
-        //Task<(string TagName, int Count)> GetTopTagUsageAsync();
+
     }
 }

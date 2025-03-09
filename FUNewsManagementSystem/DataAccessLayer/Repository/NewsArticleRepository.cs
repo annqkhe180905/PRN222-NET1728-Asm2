@@ -34,7 +34,6 @@ namespace DataAccessLayer.Repository
             return await _context.NewsArticles
                 .Include(n => n.Category)
                 .Include(n => n.CreatedBy)
-                .Include(n => n.ModifiedDate)
                 .Include(n => n.Tags)
                 .ToListAsync();
         }
