@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
-using DataAccessLayer.DAOs;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using System;

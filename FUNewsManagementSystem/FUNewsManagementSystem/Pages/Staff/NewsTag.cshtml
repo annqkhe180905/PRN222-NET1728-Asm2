@@ -2,6 +2,93 @@
 @model FUNewsManagementSystem.Pages.Staff.NewsTagModel
 @{
 }
-<div class="container mt-4 container-custom">
-    newstag ne
+<h1>Tags</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.TagDTOs[0].TagName)</th>
+            <th>@Html.DisplayNameFor(model => model.TagDTOs[0].Note)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TagDTOs)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.TagName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Note)</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="loadTag(@item.TagId)">Edit</button>
+                    <a asp-page="./Details" asp-route-id="@item.TagId" class="btn btn-info btn-sm">Details</a>
+                    <a asp-page="./Delete" asp-route-id="@item.TagId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Edit Tag Modal -->
+<div class="modal fade" id="editTagModal" tabindex="-1" aria-labelledby="editTagModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTagModalLabel">Edit Tag</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTagForm">
+                    <input type="hidden" id="editTagId" name="TagId">
+
+                    <div class="mb-3">
+                        <label for="editTagName" class="form-label">Tag Name</label>
+                        <input type="text" class="form-control" id="editTagName" name="TagName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editTagNote" class="form-label">Note</label>
+                        <textarea class="form-control" id="editTagNote" name="Note"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        function loadTag(id) {
+            fetch(`/Tags/GetById?id=${id}`)
+                .then(response => response.json())
+                .then(tag => {
+                    document.getElementById('editTagId').value = tag.tagId;
+                    document.getElementById('editTagName').value = tag.tagName;
+                    document.getElementById('editTagNote').value = tag.note;
+                    new bootstrap.Modal(document.getElementById('editTagModal')).show();
+                })
+                .catch(error => console.error('Error loading tag:', error));
+        }
+
+        document.getElementById('editTagForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('/Tags/Edit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to update tag');
+                location.reload();
+            })
+            .catch(error => console.error('Edit Error:', error));
+        });
+    </script>
+}

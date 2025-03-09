@@ -1,5 +1,4 @@
-﻿using DataAccessLayer.DAOs;
-using DataAccessLayer.Entities;
+﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
