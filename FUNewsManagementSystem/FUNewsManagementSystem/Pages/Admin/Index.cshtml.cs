@@ -94,9 +94,11 @@ namespace FUNewsManagementSystem.Pages.Admin
                     TempData["ErrorMessage"] = "Account not found.";
                     return Page();
                 }
+                bool newStatus = !account.Status;
+
 
                 await _accountService.DeleteAccount(id);
-                TempData["SuccessMessage"] = "Account deleted successfully.";
+                TempData["SuccessMessage"] = newStatus ? "Account enabled successfully." : "Account disabled successfully.";
                 return RedirectToPage();
             }
             catch (Exception ex)

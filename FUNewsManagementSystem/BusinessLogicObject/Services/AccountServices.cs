@@ -39,17 +39,6 @@ namespace BusinessLogicLayer.Services
             return await _accountRepository.CountAsync();
         }
 
-        public Task CreateAccountAsync(AccountDTO dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAccountAsync(short id)
-        {
-            var newAccount = _mapper.Map<SystemAccount>(account);
-            await _accountRepository.AddAccount(newAccount);
-        }
-
         public async Task DeleteAccount(short id)
         {
             await _accountRepository.DeleteAccount(id);
@@ -79,16 +68,6 @@ namespace BusinessLogicLayer.Services
             return await _accountRepository.GetListTopAccountCreatedNewsAsync();
         }
 
-        public Task<bool> HasRelatedEntitiesAsync(short id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> IsEmailUniqueAsync(string email)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<AccountDTO> Login(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return null;
@@ -115,21 +94,6 @@ namespace BusinessLogicLayer.Services
             throw new NotImplementedException();
         }
 
-        public Task UpdateAccountAsync(AccountDTO dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateProfile(AccountDTO dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<AccountDTO> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        
+      
     }
 }

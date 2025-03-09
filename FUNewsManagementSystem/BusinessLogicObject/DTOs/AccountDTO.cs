@@ -20,6 +20,6 @@ namespace BusinessLogicLayer.DTOs
 
         public string? AccountPassword { get; set; }
         public string? ImgUrl { get; set; }
-        public string Status { get; set; }
+        public bool Status { get; set; }
     }
 }

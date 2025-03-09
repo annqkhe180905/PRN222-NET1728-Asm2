@@ -1,13 +1,14 @@
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Services;
+using FUNewsManagementSystem.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
 namespace FUNewsManagementSystem.Pages
 {
-    public class ProfileModel : PageModel
+    public class ProfileModel : BasePageModel
     {
         private readonly IAccountServices _accountServices;
 
@@ -15,7 +16,10 @@ namespace FUNewsManagementSystem.Pages
         public AccountDTO Account { get; set; }
 
         [BindProperty]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
+
+        [BindProperty]
+        public IFormFile ProfileImage { get; set; }
 
         public ProfileModel(IAccountServices accountServices)
         {
@@ -38,6 +42,14 @@ namespace FUNewsManagementSystem.Pages
         {
             if (!ModelState.IsValid)
             {
+                foreach (var modelStateKey in ModelState.Keys)
+                {
+                    var modelStateVal = ModelState[modelStateKey];
+                    foreach (var error in modelStateVal.Errors)
+                    {
+                        Console.WriteLine($"ModelState Error - Key: {modelStateKey}, Error: {error.ErrorMessage}");
+                    }
+                }
                 return Page();
             }
 
@@ -57,13 +69,25 @@ namespace FUNewsManagementSystem.Pages
                 user.AccountPassword = NewPassword;
             }
 
+            if (ProfileImage != null && ProfileImage.Length > 0)
+            {
+                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(ProfileImage.FileName)}";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", fileName);
 
-           await _accountServices.UpdateAccount(user);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ProfileImage.CopyToAsync(stream);
+                }
 
-          
-                HttpContext.Session.SetString("Account", JsonConvert.SerializeObject(user));
+                user.ImgUrl = fileName;
+            }
 
-            return RedirectToPage("/Profile");
+            await _accountServices.UpdateAccount(user);
+
+            HttpContext.Session.SetString("Account", JsonConvert.SerializeObject(user));
+
+            return RedirectToPage("/staff/Profile");
         }
+
     }
 }
