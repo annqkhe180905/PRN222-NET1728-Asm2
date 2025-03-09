@@ -1,7 +1,7 @@
 ﻿@page
 @model FUNewsManagementSystem.Pages.Category.DashboardModel
 @{
-    ViewData["Title"] = "Dashboard";
+    // ViewData["Title"] = "Dashboard";
     Layout = null;
 }
 <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -15,7 +15,7 @@
                 <i class="fas fa-newspaper"></i>
             </div>
             <div class="stats-content">
-                <h3>@Model.NewAriclesCount</h3>
+                <h3>@Model.NewsCount</h3>
                 <p>Tổng số bài viết</p>
             </div>
         </div>
@@ -42,7 +42,7 @@
                 <i class="fa-solid fa-list"></i>
             </div>
             <div class="stats-content">
-                <h3>@Model.CategorysCount</h3>
+                <h3>@Model.CategoriesCount</h3>
                 <p>Tổng số Category</p>
             </div>
         </div>
@@ -61,11 +61,49 @@
                 <button type="submit" class="btn btn-primary">Lọc</button>
             </div>
         </form>
-        <div class="chart-container">
-            <canvas id="myChart" width="800" height="600"></canvas>
+        <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="lineChart" width="800" height="600"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="polarChart" width="800" height="600"></canvas>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="barChart" width="800" height="600"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="pieChart" width="800" height="800"></canvas>
+            </div>
+        </div>
         </div>
     </div>
 </div>
+@{
+    var stats = Model.Stats ?? new List<DailyStat>();
+    var dates = stats.Select(s => s.Date.ToString("yyyy-MM-dd"));
+    var values = stats.Select(s => s.Value);
+
+    var topStat = Model.TopStats;
+    var polarLabels = topStat != null ? new[]{$"Tài khoản tạo news nhiều nhất: {topStat.TopAccountNewsCount.AccountName}", $"Category được dùng nhiều nhất: {topStat.TopCategoryUsageCount.CategoryName}"} : new[] { "Không có dữ liệu","không có dữ liệu"};
+    var polarValues = topStat != null ? new[]{topStat.TopAccountNewsCount.Count, topStat.TopCategoryUsageCount.Count} : new[] { 0,0 };
+
+    var topCategories = Model.TopCategories;
+    var barLabels = topCategories.Select(c => c.CategoryName);
+    var barValues = topCategories.Select(c => c.Count);
+
+    var topAcc = Model.TopAccountCreateNews;
+    var pieLabels = topAcc.Select(c => c.AccountName);
+    var pieValues = topAcc.Select(c => c.Count);
+}
 <style>
     .chart-container {
         display: flex;
@@ -82,15 +120,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        const dates = @Html.Raw(Json.Serialize(Model.Stats.Select(s => s.Date.ToString("yyyy-MM-dd"))));
-        const values = @Html.Raw(Json.Serialize(Model.Stats.Select(s => s.Value)));
+        const dates = @Html.Raw(Json.Serialize(dates));
+        const values = @Html.Raw(Json.Serialize(values));
 
-        console.log("Dates:", dates);
-        console.log("Values:", values);
-
-        const ctx = document.getElementById('myChart');
+        const ctx = document.getElementById('lineChart');
         if (ctx) {
-            console.log("Canvas được tìm thấy.");
             new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -117,7 +151,7 @@
                             }
                         },
                         y: {
-                            title: { display: true, text: 'Giá trị' },
+                            title: { display: true, text: 'Số news tạo trong ngày' },
                             beginAtZero: true,
                             grid: {
                                 display: true,
@@ -127,6 +161,121 @@
                         }
                     }
                 }
+            });
+        }
+
+        const polarChart = document.getElementById('polarChart').getContext('2d');
+        const polarLabels = @Html.Raw(Json.Serialize(polarLabels));
+        const polarValues = @Html.Raw(Json.Serialize(polarValues));
+
+        new Chart(polarChart, {
+            type: 'polarArea',
+            data: {
+                labels: polarLabels,
+                datasets: [{
+                    label: 'Top 3 đối tượng có số lượng lớn nhất',
+                    data: polarValues,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)', 
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)'  
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top 3 đối tượng có số lượng lớn nhất'
+                    }
+                }
+            }
+        });
+
+
+        const barChart = document.getElementById('barChart').getContext('2d');
+        const barLabels = @Html.Raw(Json.Serialize(barLabels));
+        const barValues = @Html.Raw(Json.Serialize(barValues));
+
+
+        if (barChart) {
+            new Chart(barChart, {
+                type: 'bar',
+                data: {
+                    labels: barLabels,
+                    datasets: [
+                        {
+                            label: 'Số lượng bài viết theo danh mục',
+                            data: barValues,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 2,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Top 5 danh mục phổ biến' }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Số bài viết' } },
+                x: { title: { display: true, text: 'Danh mục' } }
+            }
+        }
+            });
+        }
+
+
+
+        const pieChart = document.getElementById('pieChart').getContext('2d');
+        const pieLabels = @Html.Raw(Json.Serialize(pieLabels));
+        const pieValues = @Html.Raw(Json.Serialize(pieValues));
+
+
+        if (pieChart) {
+            new Chart(pieChart, {
+                type: 'pie',
+                data: {
+                    labels: pieLabels,
+                    datasets: [
+                        {
+                            label: 'Số lượng bài viết đã tạo',
+                            data: pieValues,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.6)', 
+                                'rgba(54, 162, 235, 0.6)',
+                                'rgba(255, 206, 86, 0.6)' 
+                            ],
+                            borderWidth: 2,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Top 5 tài khoản tạo news nhiều nhất' }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Số bài viết' } },
+                x: { title: { display: true, text: 'Bài viết' } }
+            }
+        }
             });
         }
     })

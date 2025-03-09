@@ -1,7 +1,8 @@
-﻿using BusinessLogicLayer.Interfaces;
+﻿using BusinessLogicLayer.DTOs;
+using BusinessLogicLayer.Interfaces;
+using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using static FUNewsManagementSystem.Pages.Category.DashboardModel;
 
 namespace FUNewsManagementSystem.Pages.Category
 {
@@ -12,16 +13,18 @@ namespace FUNewsManagementSystem.Pages.Category
         private readonly INewsArticleServices _newsArticleServices;
         private readonly ITagServices _tagServices;
 
-        public int AccountsCount { get; set; }
-        public int CategorysCount { get; set; }
-        public int NewAriclesCount { get; set; }
-        public int TagsCount { get; set; }
         [BindProperty(SupportsGet = true)]
         public DateTime StartDate { get; set; }
         [BindProperty(SupportsGet = true)]
         public DateTime EndDate { get; set; }
         public List<DailyStat> Stats { get; set; }
-        public List<DailyStat> NewStats { get; set; }
+        public TopStats TopStats { get; set; }
+        public int AccountsCount { get; set; }
+        public int NewsCount { get; set; }
+        public int CategoriesCount { get; set; }
+        public int TagsCount { get; set; }
+        public List<(string CategoryName, int Count)> TopCategories { get; set; }
+        public List<(string AccountName, int Count)> TopAccountCreateNews { get; set; }
         public DashboardModel(ICategoryServices categoryServices, IAccountServices accountServices, INewsArticleServices newsArticleServices, ITagServices tagServices)
         {
             _categoryServices = categoryServices;
@@ -29,32 +32,54 @@ namespace FUNewsManagementSystem.Pages.Category
             _newsArticleServices = newsArticleServices;
             _tagServices = tagServices;
         }
-        public async void OnGet()
+        public async Task OnGet()
         {
-            AccountsCount = 10;
-            CategorysCount = 10;
-            NewAriclesCount = 10;
-            TagsCount = 10;
-
-            StartDate = DateTime.Now;
-            EndDate = DateTime.Now.AddDays(7);
-        }
-
-        private List<DailyStat> GenerateSampleStats(DateTime start, DateTime end)
-        {
-            var stats = new List<DailyStat>();
-            for (var date = start; date <= end; date = date.AddDays(1))
+            if (Request.Query.TryGetValue("startDate", out var startDateValue) && DateTime.TryParse(startDateValue, out var parsedStartDate))
             {
-                stats.Add(new DailyStat
-                {
-                    Date = date,
-                    Value = new Random().Next(1, 100) // Giá trị ngẫu nhiên
-                });
+                StartDate = parsedStartDate;
             }
-            return stats;
+            else
+            {
+                StartDate = DateTime.Now;
+            }
+
+            if (Request.Query.TryGetValue("endDate", out var endDateValue) && DateTime.TryParse(endDateValue, out var parsedEndDate))
+            {
+                EndDate = parsedEndDate;
+            }
+            else
+            {
+                EndDate = DateTime.Now.AddDays(7);
+            }
+            NewsCount = await _newsArticleServices.CountAsync();
+            AccountsCount = await _accountServices.CountAsync();
+            CategoriesCount = await _categoryServices.CountAsync();
+            TagsCount = 10;
+            Stats = (await _newsArticleServices.GetNewsByDateRangeAsync(StartDate, EndDate))
+                .GroupBy(x => x.CreatedDate)
+                .Select(n => new DailyStat
+                {
+                    Date = (DateTime)n.Key,
+                    Value = n.Count()
+                })
+                .ToList();
+
+            TopCategories = await _categoryServices.GetListTopCategoriesAsync();
+            TopAccountCreateNews = await _accountServices.GetListTopAccountCreatedNewsAsync();
+            TopStats = new TopStats
+            {
+                TopAccountNewsCount = await _newsArticleServices.GetTopAccountWithMostNewsAsync(),
+                //TopTagUsageCount = await _tagServices.GetTopTagUsageAsync(),
+                TopCategoryUsageCount = await _categoryServices.GetTopCategoryUsageAsync()
+            };
         }
     }
-
+    public class TopStats
+    {
+        public (string AccountName, int Count) TopAccountNewsCount { get; set; }
+        //public (string TagName, int Count) TopTagUsageCount { get; set; }
+        public (string CategoryName, int Count) TopCategoryUsageCount { get; set; }
+    }
     public class DailyStat
     {
         public DateTime Date { get; set; }

@@ -31,6 +31,11 @@ namespace BusinessLogicLayer.Services
             _mapper = mapper;
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await _accountRepository.CountAsync();
+        }
+
         public Task CreateAccountAsync(AccountDTO dto)
         {
             throw new NotImplementedException();
@@ -59,6 +64,11 @@ namespace BusinessLogicLayer.Services
         public Task<List<AccountDTO>> GetAllAccountsAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<(string AccountName, int Count)>> GetListTopAccountCreatedNewsAsync()
+        {
+            return await _accountRepository.GetListTopAccountCreatedNewsAsync();
         }
 
         public Task<bool> HasRelatedEntitiesAsync(short id)

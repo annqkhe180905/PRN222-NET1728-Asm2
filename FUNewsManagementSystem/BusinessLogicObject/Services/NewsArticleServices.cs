@@ -29,10 +29,10 @@ namespace BusinessLogicLayer.Services
         }
 
         public async Task<List<NewsArticleDTO>> GetAllNewsAsync()
-    {
-        var newsArticles = await _newsRepository.GetAllNewsAsync();
-        return _mapper.Map<List<NewsArticleDTO>>(newsArticles);
-    }
+        {
+            var newsArticles = await _newsRepository.GetAllNewsAsync();
+            return _mapper.Map<List<NewsArticleDTO>>(newsArticles);
+        }
 
         public async Task<NewsArticleDTO?> GetNewsByIdAsync(string newsId)
         {
@@ -101,6 +101,22 @@ namespace BusinessLogicLayer.Services
                 ImgUrl = newsArticle.ImgUrl,
                 TagIds = newsArticle.Tags?.Select(t => t.TagId).ToList()
             };
+        }
+
+        public async Task<List<NewsArticleDTO>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            var list = await _newsRepository.GetNewsByDateRangeAsync(startDate, endDate);
+            return _mapper.Map<List<NewsArticleDTO>>(list);
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await _newsRepository.CountAsync();
+        }
+
+        public async Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync()
+        {
+            return await _newsRepository.GetTopAccountWithMostNewsAsync();
         }
     }
 }

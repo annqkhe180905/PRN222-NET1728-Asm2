@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,6 +91,27 @@ namespace DataAccessLayer.Repository
         public async Task<IEnumerable<NewsArticle>> GetActiveNewsForLecturersAsync()
         {
             return await _context.NewsArticles.Where(n => n.NewsStatus == true).ToListAsync();
+        }
+
+        public async Task<List<NewsArticle>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _context.NewsArticles.AsNoTracking().Where(x => x.CreatedDate >= startDate && x.CreatedDate <= endDate).ToListAsync();
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await _context.NewsArticles.AsNoTracking().CountAsync();
+        }
+
+        public async Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync()
+        {
+            var topAccount = await _context.NewsArticles
+                .Include(n => n.CreatedBy)
+                .GroupBy(g => g.CreatedBy)
+                .Select(x => new { Account = x.Key, Count = x.Count() })
+                .OrderByDescending(x => x.Count)
+                .FirstOrDefaultAsync();
+            return (topAccount == null) ? ("None", 0) : (topAccount.Account.AccountName, topAccount.Count);
         }
     }
 }

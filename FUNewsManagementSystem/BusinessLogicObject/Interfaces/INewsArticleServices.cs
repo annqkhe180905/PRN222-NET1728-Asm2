@@ -20,5 +20,8 @@ namespace BusinessLogicLayer.Interfaces
         Task<IEnumerable<NewsArticleDTO>> SearchNewsArticlesAsync(string keyword, short? categoryId, int[]? tagIds);
         Task<IEnumerable<NewsArticleDTO>> GetNewsHistoryByStaffIdAsync(short staffId);
         Task<IEnumerable<NewsArticleDTO>> GetActiveNewsForLecturersAsync();
+        Task<List<NewsArticleDTO>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<int> CountAsync();
+        Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync();
     }
 }

@@ -11,6 +11,8 @@ namespace BusinessLogicLayer.Interfaces
 {
     public interface IAccountServices
     {
+        Task<int> CountAsync();
+        Task<List<(string AccountName, int Count)>> GetListTopAccountCreatedNewsAsync();
         public Task<AccountDTO> Login(string email, string password);
         
     }
