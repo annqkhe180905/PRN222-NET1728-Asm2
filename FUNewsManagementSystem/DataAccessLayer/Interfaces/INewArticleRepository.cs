@@ -13,10 +13,12 @@ namespace DataAccessLayer.Interfaces
         Task<List<NewsArticle>> GetAllNewsAsync();
         Task<NewsArticle?> GetNewsByIdAsync(string newsId);
         Task<List<NewsArticle>> SearchNewsAsync(string query);
-        Task CreateNewsAsync(NewsArticle news);
+        Task<NewsArticle?> CreateNewsArticleAsync(NewsArticle newArticle);
         Task UpdateNewsAsync(NewsArticle news);
         Task DeleteNewsAsync(string newsId);
 
-
+        Task<List<NewsArticle>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<int> CountAsync();
+        Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync();
     }
 }

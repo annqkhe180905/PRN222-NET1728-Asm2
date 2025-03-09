@@ -3,6 +3,7 @@ using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,12 +50,14 @@ namespace BusinessLogicLayer.Services
         public async Task CreateNewsAsync(NewsArticleDTO newsDto)
         {
             var news = _mapper.Map<NewsArticle>(newsDto);
-            await _newsRepository.CreateNewsAsync(news);
+            news.CreatedDate = DateTime.UtcNow;                       
+            await _newsRepository.CreateNewsArticleAsync(news);
         }
 
         public async Task UpdateNewsAsync(NewsArticleDTO newsDto)
         {
             var news = _mapper.Map<NewsArticle>(newsDto);
+            news.ModifiedDate = DateTime.UtcNow;
             await _newsRepository.UpdateNewsAsync(news);
         }
 

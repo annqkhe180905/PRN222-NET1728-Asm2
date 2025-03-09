@@ -18,6 +18,9 @@ namespace BusinessLogicLayer.Interfaces
             Task CreateNewsAsync(NewsArticleDTO newsDto);
             Task UpdateNewsAsync(NewsArticleDTO newsDto);
             Task DeleteNewsAsync(string newsId);
+        Task<List<NewsArticleDTO>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<int> CountAsync();
+        Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync();
 
     }
 }
