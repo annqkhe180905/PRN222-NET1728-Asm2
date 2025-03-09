@@ -20,6 +20,9 @@ namespace BusinessLogicLayer.Interfaces
         Task DeleteAccount(short id);
         Task UpdateAccount(AccountDTO account);
         Task<AccountDTO> GetAccountById(short id);
+
+        Task<int> CountAsync();
+        Task<List<(string AccountName, int Count)>> GetListTopAccountCreatedNewsAsync();
         public Task<AccountDTO> Login(string email, string password);
         
     }

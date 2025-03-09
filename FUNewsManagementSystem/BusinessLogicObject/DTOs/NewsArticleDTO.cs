@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace BusinessLogicLayer.DTOs
 {
     public class NewsArticleDTO
     {
-        public string NewsArticleId { get; set; } = null!;
+        public string? NewsArticleId { get; set; } = null!;
 
         public string? NewsTitle { get; set; }
 
@@ -32,7 +33,8 @@ namespace BusinessLogicLayer.DTOs
 
         public DateTime? ModifiedDate { get; set; }
 
-        public string ImgUrl { get; set; }
+        public string ImgUrl { get; set; } = string.Empty;
+        public IFormFile? ImageFile { get; set; }
 
         public List<int>? TagIds { get; set; }
     }

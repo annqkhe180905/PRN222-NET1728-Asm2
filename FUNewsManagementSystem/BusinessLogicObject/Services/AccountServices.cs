@@ -28,7 +28,23 @@ namespace BusinessLogicLayer.Services
             _mapper = mapper;
         }
 
-        public async Task AddAccount(AccountDTO account)
+     public async Task AddAccount(AccountDTO account)
+   {
+       var newAccount = _mapper.Map<SystemAccount>(account);
+       await _accountRepository.AddAccount(newAccount);
+   }
+        
+        public async Task<int> CountAsync()
+        {
+            return await _accountRepository.CountAsync();
+        }
+
+        public Task CreateAccountAsync(AccountDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAccountAsync(short id)
         {
             var newAccount = _mapper.Map<SystemAccount>(account);
             await _accountRepository.AddAccount(newAccount);
@@ -55,6 +71,22 @@ namespace BusinessLogicLayer.Services
         {
             var updatedAccount = _mapper.Map<SystemAccount>(account);
             await _accountRepository.UpdateAccount(updatedAccount);
+
+        }
+
+        public async Task<List<(string AccountName, int Count)>> GetListTopAccountCreatedNewsAsync()
+        {
+            return await _accountRepository.GetListTopAccountCreatedNewsAsync();
+        }
+
+        public Task<bool> HasRelatedEntitiesAsync(short id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsEmailUniqueAsync(string email)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<AccountDTO> Login(string email, string password)

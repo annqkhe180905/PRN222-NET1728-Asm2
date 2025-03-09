@@ -13,5 +13,8 @@ namespace DataAccessLayer.Interfaces
         Task<int> Create(Category category);
         Task<bool> Delete(int id);
         Task<bool> UpdateAsync(Category updateCategory);
+        Task<int> CountAsync();
+        Task<(string CategoryName, int Count)> GetTopCategoryUsageAsync();
+        Task<List<(string CategoryName, int Count)>> GetListTopCategoriesAsync();
     }
 }
