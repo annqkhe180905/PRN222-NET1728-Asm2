@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
-using DataAccessLayer.DAOs;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
-using DataAccessLayer.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,46 +17,87 @@ namespace BusinessLogicLayer.Services
 {
     public class AccountServices : IAccountServices
     {
-        private readonly IAccountRepository _acountRepo;
-        private readonly IMapper mapper;
-        public AccountServices(IAccountRepository acountRepo, IMapper mapper)
+        private readonly IAccountRepository _accountRepository;
+        private readonly AdminAccount _adminAccount;
+        private readonly IMapper _mapper;
+
+        public AccountServices(IAccountRepository accountRepository, IOptions<AdminAccount> adminAccount, IMapper mapper)
         {
-            this._acountRepo = acountRepo;
-            this.mapper = mapper;
+            _accountRepository = accountRepository;
+            _adminAccount = adminAccount.Value;
+            _mapper = mapper;
         }
 
-        public async Task AddAcount(AccountDTO account)
+        public async Task AddAccount(AccountDTO account)
         {
-            var newAccount = mapper.Map<SystemAccount>(account);
-             await _acountRepo.AddAcount(newAccount);
+            var newAccount = _mapper.Map<SystemAccount>(account);
+            await _accountRepository.AddAccount(newAccount);
         }
 
-        public async Task DeleteAcount(short id)
+        public async Task DeleteAccount(short id)
         {
-            await _acountRepo.DeleteAcount(id);
+            await _accountRepository.DeleteAccount(id);
         }
 
-        public async Task<AccountDTO> GetAcountById(short id)
+        public async Task<AccountDTO> GetAccountById(short id)
         {
-            var account = await _acountRepo.GetAcountById(id);
-            return mapper.Map<AccountDTO>(account);
-        }
-
-        public Task<AccountDTO> GetListPagingAcounts(string searchTerm, int pageIndex, int pageSize)
-        {
-            throw new NotImplementedException();
+            var account = await _accountRepository.GetAccountById(id);
+            return _mapper.Map<AccountDTO>(account);
         }
 
         public async Task<List<AccountDTO>> GetSystemAccounts()
         {
-            List<SystemAccount> accounts = await _acountRepo.GetSystemAccounts();
-            return mapper.Map<List<AccountDTO>>(accounts);
+            var accounts = await _accountRepository.GetSystemAccounts();
+            return _mapper.Map<List<AccountDTO>>(accounts);
         }
 
-        public async Task UpdateAcount(AccountDTO account)
+        public async Task UpdateAccount(AccountDTO account)
         {
-            var newAccount = mapper.Map<SystemAccount>(account);
-            await _acountRepo.UpdateAcount(newAccount);
+            var updatedAccount = _mapper.Map<SystemAccount>(account);
+            await _accountRepository.UpdateAccount(updatedAccount);
         }
+
+        public async Task<AccountDTO> Login(string email, string password)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return null;
+
+            if (email == _adminAccount.Email && password == _adminAccount.Password)
+            {
+                return new AccountDTO
+                {
+                    AccountName = "Admin",
+                    AccountEmail = email,
+                    AccountPassword = password,
+                    AccountRole = 0,
+                };
+            }
+
+            var user = await _accountRepository.Login(email);
+            if (user == null || user.AccountPassword != password) return null;
+
+            return _mapper.Map<AccountDTO>(user);
+        }
+
+        public IEnumerable<AccountDTO> SearchAccounts(string name, int? role)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAccountAsync(AccountDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateProfile(AccountDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AccountDTO> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        
     }
 }

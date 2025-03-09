@@ -11,11 +11,12 @@ namespace DataAccessLayer.Interfaces
     {
         Task<List<SystemAccount>> GetSystemAccounts();
 
-        Task<SystemAccount> GetListPagingAcounts(string searchTerm, int pageIndex, int pageSize);
+        Task<SystemAccount> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize);
 
-        Task AddAcount(SystemAccount account);
-        Task DeleteAcount(short id);
-        Task UpdateAcount(SystemAccount account);
-        Task<SystemAccount> GetAcountById(short id);
+        Task AddAccount(SystemAccount account);
+        Task DeleteAccount(short id);
+        Task UpdateAccount(SystemAccount account);
+        Task<SystemAccount> GetAccountById(short id);
+        public Task<SystemAccount> Login(string email);
     }
 }

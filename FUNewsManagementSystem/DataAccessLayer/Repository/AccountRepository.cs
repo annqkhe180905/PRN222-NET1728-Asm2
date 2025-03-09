@@ -11,28 +11,31 @@ namespace DataAccessLayer.Repository
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly FunewsManagementContext _dbContext;
-        public AccountRepository(FunewsManagementContext dbContext)
+        private readonly FunewsManagementContext _context;
+
+        public AccountRepository(FunewsManagementContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
-        public async Task AddAcount(SystemAccount account)
+
+        public async Task AddAccount(SystemAccount account)
         {
             try
             {
                 // Kiểm tra xem email đã tồn tại hay chưa
-                bool emailExists = await _dbContext.SystemAccounts.AnyAsync(a => a.AccountEmail == account.AccountEmail);
+                bool emailExists = await _context.SystemAccounts.AnyAsync(a => a.AccountEmail == account.AccountEmail);
                 if (emailExists)
                 {
                     throw new Exception("Email already exists");
                 }
 
                 // Tạo ID mới dựa trên số lượng tài khoản hiện có
-                account.AccountId = (short)(await _dbContext.SystemAccounts.CountAsync() + 1);
+                account.AccountId = (short)(await _context.SystemAccounts.CountAsync() + 1);
                 account.AccountPassword = "@1";
+
                 // Thêm tài khoản vào database
-                _dbContext.SystemAccounts.Add(account);
-                await _dbContext.SaveChangesAsync();
+                _context.SystemAccounts.Add(account);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -40,71 +43,63 @@ namespace DataAccessLayer.Repository
             }
         }
 
-
-
-
-
-        public async Task DeleteAcount(short id)
+        public async Task DeleteAccount(short id)
         {
             try
             {
-                var exitAccount = await _dbContext.SystemAccounts.FirstOrDefaultAsync(art => art.AccountId == id);
-                if (exitAccount == null)
+                var existingAccount = await _context.SystemAccounts.FirstOrDefaultAsync(art => art.AccountId == id);
+                if (existingAccount == null)
                 {
-                    throw new Exception("Account not exist");
+                    throw new Exception("Account does not exist");
                 }
 
-                exitAccount.AccountStatus = false;
-
-                await _dbContext.SaveChangesAsync();
-
-
+                existingAccount.AccountStatus = false;
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception($"Error deleting account: {ex.Message}", ex);
             }
         }
 
-        public async Task<SystemAccount> GetAcountById(short id)
+        public async Task<SystemAccount> GetAccountById(short id)
         {
-            return await _dbContext.SystemAccounts.FirstOrDefaultAsync(art => art.AccountId == id);
-
+            return await _context.SystemAccounts.FirstOrDefaultAsync(art => art.AccountId == id);
         }
 
-        public Task<SystemAccount> GetListPagingAcounts(string searchTerm, int pageIndex, int pageSize)
+        public Task<SystemAccount> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize)
         {
             throw new NotImplementedException();
         }
 
         public async Task<List<SystemAccount>> GetSystemAccounts()
         {
-            return await _dbContext.SystemAccounts.ToListAsync();
+            return await _context.SystemAccounts.ToListAsync();
         }
 
-        public async Task UpdateAcount(SystemAccount account)
+        public async Task UpdateAccount(SystemAccount account)
         {
-
-            bool emailExists = await _dbContext.SystemAccounts.AnyAsync(a => a.AccountEmail == account.AccountEmail);
+            bool emailExists = await _context.SystemAccounts.AnyAsync(a => a.AccountEmail == account.AccountEmail);
             if (emailExists)
             {
                 throw new Exception("Email already exists");
             }
-            var existingAccount = await _dbContext.SystemAccounts.FindAsync(account.AccountId);
 
-    
+            var existingAccount = await _context.SystemAccounts.FindAsync(account.AccountId);
             if (existingAccount != null)
             {
                 existingAccount.AccountName = account.AccountName;
                 existingAccount.AccountEmail = account.AccountEmail;
                 existingAccount.AccountRole = account.AccountRole;
-              //  existingAccount.ImgUrl = account.ImgUrl;
                 existingAccount.AccountStatus = account.AccountStatus;
 
-           
-
-                await _dbContext.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<SystemAccount> Login(string email)
+        {
+            return await _context.SystemAccounts.FirstOrDefaultAsync(x => x.AccountEmail == email );
         }
     }
 }

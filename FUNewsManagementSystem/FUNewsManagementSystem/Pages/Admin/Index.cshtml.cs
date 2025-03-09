@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.DTOs;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using BusinessLogicLayer.Interfaces;
+using FUNewsManagementSystem.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FUNewsManagementSystem.Pages.Account
+namespace FUNewsManagementSystem.Pages.Admin
 {
-    public class AccountManagementModel : PageModel
+    public class IndexModel : BasePageModel
     {
         private readonly IAccountServices _accountService;
 
-        public AccountManagementModel(IAccountServices accountService)
+        public IndexModel(IAccountServices accountService)
         {
             _accountService = accountService;
         }
@@ -54,7 +53,7 @@ namespace FUNewsManagementSystem.Pages.Account
         {
             try
             {
-                await _accountService.AddAcount(InputAccount);
+                await _accountService.AddAccount(InputAccount);
                 TempData["SuccessMessage"] = "Account created successfully.";
                 return RedirectToPage();
             }
@@ -71,9 +70,9 @@ namespace FUNewsManagementSystem.Pages.Account
 
             try
             {
-             
 
-                await _accountService.UpdateAcount(InputAccount);
+
+                await _accountService.UpdateAccount(InputAccount);
                 TempData["SuccessMessage"] = "Account updated successfully.";
                 return RedirectToPage();
             }
@@ -82,21 +81,21 @@ namespace FUNewsManagementSystem.Pages.Account
                 TempData["ErrorMessage"] = ex.Message;
                 return await OnGet();
             }
-            
+
         }
 
         public async Task<IActionResult> OnPostDelete(short id)
         {
             try
             {
-                var account = await _accountService.GetAcountById(id);
+                var account = await _accountService.GetAccountById(id);
                 if (account == null)
                 {
                     TempData["ErrorMessage"] = "Account not found.";
                     return Page();
                 }
 
-                await _accountService.DeleteAcount(id);
+                await _accountService.DeleteAccount(id);
                 TempData["SuccessMessage"] = "Account deleted successfully.";
                 return RedirectToPage();
             }

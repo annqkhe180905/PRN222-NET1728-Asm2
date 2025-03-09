@@ -1,5 +1,7 @@
 ﻿using BusinessLogicLayer.DTOs;
 using DataAccessLayer.Entities;
+
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,13 @@ namespace BusinessLogicLayer.Interfaces
     {
         Task<List<AccountDTO>> GetSystemAccounts();
 
-        Task<AccountDTO> GetListPagingAcounts(string searchTerm, int pageIndex, int pageSize);
+        Task<AccountDTO> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize);
 
-        Task AddAcount(AccountDTO account);
-        Task DeleteAcount(short id);
-        Task UpdateAcount(AccountDTO account);
-        Task<AccountDTO> GetAcountById(short id);
+        Task AddAccount(AccountDTO account);
+        Task DeleteAccount(short id);
+        Task UpdateAccount(AccountDTO account);
+        Task<AccountDTO> GetAccountById(short id);
+        public Task<AccountDTO> Login(string email, string password);
+        
     }
 }

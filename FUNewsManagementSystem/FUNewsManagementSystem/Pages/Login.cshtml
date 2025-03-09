@@ -1,0 +1,32 @@
+﻿@page
+@model FUNewsManagementSystem.Pages.LoginModel
+@{
+    Layout = "~/Pages/Shared/_LoginLayout.cshtml";
+}
+<div class="card m-auto mw-500 p-10 w-100">
+
+    <h2 class="fs-3 fw-bold">Welcome to FuNewsManagement!</h2>
+    <div class="mb-3 text-body-secondary">Please sign in to continue to the system</div>
+    <form method="post">
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Email" asp-for="Email" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" asp-for="Password" required>
+        </div>
+
+        <button type="submit" class="login-btn fw-bold">Sign In</button>
+        <button type="button" class="login-btn fw-bold mt-2" onclick="window.location.href='/home'">Home Page</button>
+
+    </form>
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="error-message mt-3">
+            <i class="fa-solid fa-circle-exclamation"></i> @Model.ErrorMessage
+        </div>
+    }
+
+</div>

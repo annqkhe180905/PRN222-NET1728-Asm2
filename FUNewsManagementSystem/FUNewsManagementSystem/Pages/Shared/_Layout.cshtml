@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Newtonsoft.Json
+@using BusinessLogicLayer.DTOs
+@{
+    var accountJson = Context.Session.GetString("Account");
+    var user = accountJson != null ? JsonConvert.DeserializeObject<AccountDTO>(accountJson) : null;
+    var defaultImage = "/img/avt.jpg";
+    var imgUrl = user?.ImgUrl ?? defaultImage;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,43 +16,87 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FUNewsManagementSystem.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">FUNewsManagementSystem</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+
+
+<body class="nav-fixed sidenav-toggled">
+    <nav class="topnav navbar navbar-expand shadow  justify-content-between justify-content-sm-start" id="sidenavAccordion">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand pe-3 ps-4 ps-lg-2" style="color: #FDE2E1;" href="">FUNewsManagement</a>
+
+                @if (user == null)
+                {
+                    <!-- If user is not logged in, show Login -->
+                    <a href="/login" class="btn btn-outline-light ms-3">Login</a>
+                }
+                else if (user.AccountRole == 0) // Admin
+                {
+                    <!-- If user is Admin, show Account & Report links -->
+                    <a href="/admin/account" class="nav-link text-bold ms-3">Account</a>
+                    <a href="/admin/report" class="nav-link text-bold  ms-3">Report</a>
+                }
+                else if (user.AccountRole == 1) // Staff
+                {
+                    <!-- If user is Staff, show Category, NewsTag & News links -->
+                    <a href="/staff/category" class="nav-link text-bold ms-3">Category</a>
+                    <a href="/staff/newstag" class="nav-link text-bold ms-3">NewsTag</a>
+                    <a href="/staff/news" class="nav-link text-bold ms-3">News</a>
+                }
+            </div>
+
+            <div class="account-info d-flex align-items-center">
+                <div class="user-avatar position-relative" id="avatar-container">
+
+                    @if (user != null)
+                    {
+                        <img src="@imgUrl" alt="User Image" class="rounded-circle" width="40" height="40" id="avatar" style="cursor: pointer;" />
+
+                        <div class="user-info-overlay position-absolute d-none" id="userInfo" style="top: 50px; right: 0; padding: 10px; background-color: white; border: 1px solid #ddd; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); border-radius: 5px;">
+                            <div class="fw-bold">@user.AccountName</div>
+                            <div class="fw-normal text-muted">@user.AccountEmail</div>
+                            <div class="fw-light text-muted">
+                                @if (user.AccountRole == 1)
+                                {
+                                    <i>Staff</i>
+                                }
+                                else if (user.AccountRole == 2)
+                                {
+                                    <i>Lecturer</i>
+                                }
+                                else if (user.AccountRole == 0)
+                                {
+                                    <i>Admin</i>
+                                }
+                            </div>
+
+                            <!-- Thêm đường dẫn đến trang Profile -->
+                            <div class="mt-2">
+                                <a asp-page="/staff/Profile" class="btn btn-link text-primary" style="text-decoration: none;">View Profile</a>
+                            </div>
+
+                            <form method="post">
+                                <button class="logout-btn btn btn-danger btn-sm mt-2" type="submit" asp-page-handler="Logout">Logout</button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
-        </nav>
-    </header>
+
+        </div>
+    </nav>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FUNewsManagementSystem - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/category.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
