@@ -4,7 +4,7 @@
 }
 <div class="container mt-4 container-custom">
     <div class="card card-outside-custom">
-        <div class="card card-custom h-100">
+        <div class="card card-custom h-100 p-5">
             <!-- Add Category Modal -->
             <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -92,6 +92,10 @@
                     return status == true ? "Active" : "InActive";
                 }
             }
+            <div class="text-center my-3">
+                <h1 class="fw-bold text-white display-4">Category Management</h1>
+            </div>
+
 
             <!-- Search -->
             <div class="mb-3 d-flex gap-2 w-75">
@@ -120,18 +124,18 @@
                                 <span class="d-flex @GetStatusBadgeClass(category.IsActive)" style="justify-self:center">@GetStatusString(category.IsActive)</span>
                             </td>
                             <td>
-                                <button class="btn btn-warning btn-sm"
+                                <i class="btn btn-warning btn-sm bi bi-pencil-square"
                                         data-id="@category.CategoryId"
                                         data-name="@category.CategoryName"
                                         data-description="@category.CategoryDesciption"
                                         data-active="@category.IsActive"
                                         data-bs-toggle="modal"
                                         data-bs-target="#updateCategoryModal">
-                                    Edit
-                                </button>
-                                <button class="btn btn-danger btn-sm btn-delete" data-id="@category.CategoryId">
-                                    Delete
-                                </button>
+                                    
+                                </i>
+                                <i class="btn btn-danger btn-sm btn-delete bi bi-trash-fill" data-id="@category.CategoryId">
+                                    
+                                </i>
                             </td>
                         </tr>
                     }

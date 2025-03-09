@@ -11,8 +11,8 @@ namespace FUNewsManagementSystem.Pages.Staff
         private readonly ICategoryServices categoryServices;
         public List<CategoryDTO> Categories { get; set; }
         public int CurrentPage { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-        public int TotalItems { get; set; } = 10;
+        public int PageSize { get; set; } = 6;
+        public int TotalItems { get; set; } = 6;
         [BindProperty]
         public CategoryDTO newCategory { get; set; }
 
