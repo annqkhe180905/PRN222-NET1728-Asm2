@@ -11,7 +11,6 @@ namespace DataAccessLayer.Interfaces
     {
         Task<List<SystemAccount>> GetSystemAccounts();
 
-        Task<SystemAccount> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize);
 
         Task AddAccount(SystemAccount account);
         Task DeleteAccount(short id);

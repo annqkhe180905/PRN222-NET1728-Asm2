@@ -14,8 +14,6 @@ namespace BusinessLogicLayer.Interfaces
     {
         Task<List<AccountDTO>> GetSystemAccounts();
 
-        Task<AccountDTO> GetListPagingAccounts(string searchTerm, int pageIndex, int pageSize);
-
         Task AddAccount(AccountDTO account);
         Task DeleteAccount(short id);
         Task UpdateAccount(AccountDTO account);

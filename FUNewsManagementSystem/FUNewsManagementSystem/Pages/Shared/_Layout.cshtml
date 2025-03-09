@@ -4,7 +4,7 @@
     var accountJson = Context.Session.GetString("Account");
     var user = accountJson != null ? JsonConvert.DeserializeObject<AccountDTO>(accountJson) : null;
     var defaultImage = "/img/avt.jpg";
-    var imgUrl = user?.ImgUrl ?? defaultImage;
+    var imgUrl = !string.IsNullOrEmpty(user?.ImgUrl) ? $"/img/{user.ImgUrl}" : defaultImage;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -74,9 +74,12 @@
                             </div>
 
                             <!-- Thêm đường dẫn đến trang Profile -->
-                            <div class="mt-2">
-                                <a asp-page="/staff/Profile" class="btn btn-link text-primary" style="text-decoration: none;">View Profile</a>
-                            </div>
+                            @if (user.AccountRole == 1 )
+                            {
+                                <form method="post" class="mt-2">
+                                    <a asp-page="/staff/Profile" class="logout-btn btn btn-danger btn-sm" style="text-decoration: none;">View Profile</a>
+                                </form>
+                            }
 
                             <form method="post">
                                 <button class="logout-btn btn btn-danger btn-sm mt-2" type="submit" asp-page-handler="Logout">Logout</button>
