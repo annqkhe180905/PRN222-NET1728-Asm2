@@ -86,6 +86,7 @@ namespace DataAccessLayer.Repository
                 existingAccount.AccountName = account.AccountName;
                 existingAccount.AccountEmail = account.AccountEmail;
                 existingAccount.AccountRole = account.AccountRole;
+                existingAccount.ImgUrl = account.ImgUrl;
 
                 await _context.SaveChangesAsync();
             }

@@ -22,7 +22,7 @@ namespace FUNewsManagementSystem.Filters
             {
                 return;
             }
-
+/*
             if (user == null)
             {
                 context.Result = new RedirectToPageResult("/login");
@@ -38,7 +38,7 @@ namespace FUNewsManagementSystem.Filters
             {
                 context.Result = new RedirectToPageResult("/login");
                 return;
-            }
+            }*/
         }
 
         public void OnPageHandlerSelected(PageHandlerSelectedContext context)
