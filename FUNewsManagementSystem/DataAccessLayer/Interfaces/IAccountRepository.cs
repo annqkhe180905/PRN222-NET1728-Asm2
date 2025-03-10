@@ -9,6 +9,14 @@ namespace DataAccessLayer.Interfaces
 {
     public interface IAccountRepository
     {
+        Task<List<SystemAccount>> GetSystemAccounts();
+
+
+        Task AddAccount(SystemAccount account);
+        Task DeleteAccount(short id);
+        Task UpdateAccount(SystemAccount account);
+        Task<SystemAccount> GetAccountById(short id);
+
         Task<int> CountAsync();
         Task<List<(string AccountName, int Count)>> GetListTopAccountCreatedNewsAsync();
         public Task<SystemAccount> Login(string email);
