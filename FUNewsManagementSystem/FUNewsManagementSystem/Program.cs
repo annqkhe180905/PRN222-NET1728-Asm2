@@ -3,6 +3,7 @@ using BusinessLogicLayer.Mapper;
 using DataAccessLayer;
 using FUNewsManagementSystem;
 using FUNewsManagementSystem.Filters;
+using FUNewsManagementSystem.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,7 @@ builder.Services.AddRazorPages(options =>
 });
 
 builder.Services.AddApplicationServices();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -38,8 +40,7 @@ if (!app.Environment.IsDevelopment())
 //app.MapGet("/", () => Results.Redirect("/login"));
 app.MapGet("/staff", () => Results.Redirect("/staff/category"));
 app.MapGet("/admin", () => Results.Redirect("/admin/account"));
-
-
+app.MapHub<CrudHub>("/crudHub");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

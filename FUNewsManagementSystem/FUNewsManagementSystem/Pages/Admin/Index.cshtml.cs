@@ -1,8 +1,10 @@
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using FUNewsManagementSystem.Helpers;
+using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FUNewsManagementSystem.Pages.Admin
 {
@@ -10,7 +12,7 @@ namespace FUNewsManagementSystem.Pages.Admin
     {
         private readonly IAccountServices _accountService;
 
-        public IndexModel(IAccountServices accountService)
+        public IndexModel(IAccountServices accountService, IHubContext<CrudHub> hubContext) : base(hubContext)
         {
             _accountService = accountService;
         }
@@ -32,9 +34,6 @@ namespace FUNewsManagementSystem.Pages.Admin
             return Page();
         }
 
-
-        public List<AccountDTO> SearchResults { get; set; } = new();
-
         public async Task<IActionResult> OnGetSearch()
         {
             await OnGet();
@@ -55,6 +54,8 @@ namespace FUNewsManagementSystem.Pages.Admin
             {
                 await _accountService.AddAccount(InputAccount);
                 TempData["SuccessMessage"] = "Account created successfully.";
+                await NotifyCreate(InputAccount);
+
                 return RedirectToPage();
             }
             catch (Exception ex)
@@ -66,14 +67,11 @@ namespace FUNewsManagementSystem.Pages.Admin
 
         public async Task<IActionResult> OnPostEdit()
         {
-
-
             try
             {
-
-
                 await _accountService.UpdateAccount(InputAccount);
                 TempData["SuccessMessage"] = "Account updated successfully.";
+                await NotifyUpdate(InputAccount);
                 return RedirectToPage();
             }
             catch (Exception ex)
@@ -81,7 +79,6 @@ namespace FUNewsManagementSystem.Pages.Admin
                 TempData["ErrorMessage"] = ex.Message;
                 return await OnGet();
             }
-
         }
 
         public async Task<IActionResult> OnPostDelete(short id)
@@ -96,9 +93,9 @@ namespace FUNewsManagementSystem.Pages.Admin
                 }
                 bool newStatus = !account.Status;
 
-
                 await _accountService.DeleteAccount(id);
                 TempData["SuccessMessage"] = newStatus ? "Account enabled successfully." : "Account disabled successfully.";
+                await NotifyDelete<AccountDTO>(id);
                 return RedirectToPage();
             }
             catch (Exception ex)

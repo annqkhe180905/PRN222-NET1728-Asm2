@@ -3,9 +3,11 @@ using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Services;
 using DataAccessLayer.Interfaces;
 using FUNewsManagementSystem.Helpers;
+using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 
 namespace FUNewsManagementSystem.Pages.Home
@@ -16,8 +18,7 @@ namespace FUNewsManagementSystem.Pages.Home
         private readonly ICategoryRepository _categoryRepository;
         private readonly ITagRepository _tagRepository;
 
-
-        public IndexModel(INewsArticleServices newsArticleServices, ICategoryRepository categoryRepository, ITagRepository tagRepository)
+        public IndexModel(INewsArticleServices newsArticleServices, ICategoryRepository categoryRepository, ITagRepository tagRepository, IHubContext<CrudHub> hubContext) : base(hubContext)
         {
             _newsArticleServices = newsArticleServices;
             _categoryRepository = categoryRepository;
@@ -42,6 +43,7 @@ namespace FUNewsManagementSystem.Pages.Home
             TagList = (await _tagRepository.GetTags())
                 .Select(t => new SelectListItem { Value = t.TagId.ToString(), Text = t.TagName })
                 .ToList();
+
             return Page();
         }
 

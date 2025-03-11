@@ -2,8 +2,10 @@ using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Services;
 using FUNewsManagementSystem.Helpers;
+using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
 namespace FUNewsManagementSystem.Pages
@@ -21,7 +23,8 @@ namespace FUNewsManagementSystem.Pages
         [BindProperty]
         public IFormFile ProfileImage { get; set; }
 
-        public ProfileModel(IAccountServices accountServices)
+        public ProfileModel(IAccountServices accountServices, IHubContext<CrudHub> hubContext)
+            : base(hubContext)
         {
             _accountServices = accountServices;
         }
@@ -86,8 +89,9 @@ namespace FUNewsManagementSystem.Pages
 
             HttpContext.Session.SetString("Account", JsonConvert.SerializeObject(user));
 
+            await NotifyUpdate(user);
+
             return RedirectToPage("/staff/Profile");
         }
-
     }
 }

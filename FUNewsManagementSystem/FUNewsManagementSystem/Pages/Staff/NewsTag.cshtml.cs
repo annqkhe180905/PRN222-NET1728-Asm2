@@ -1,14 +1,17 @@
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using FUNewsManagementSystem.Helpers;
+using FUNewsManagementSystem.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FUNewsManagementSystem.Pages.Staff
 {
     public class NewsTagModel : BasePageModel
     {
         private readonly ITagServices _tagService;
+
         public List<TagDTO> Tags { get; set; } = new();
 
         [BindProperty]
@@ -17,7 +20,8 @@ namespace FUNewsManagementSystem.Pages.Staff
         [BindProperty]
         public int IdDelete { get; set; }
 
-        public NewsTagModel(ITagServices tagService)
+        public NewsTagModel(ITagServices tagService, IHubContext<CrudHub> hubContext)
+            : base(hubContext)
         {
             _tagService = tagService;
         }
@@ -38,6 +42,11 @@ namespace FUNewsManagementSystem.Pages.Staff
             try
             {
                 int id = await _tagService.CreateTag(newTag);
+                if (id > 0)
+                {
+                    await NotifyCreate(newTag); 
+                }
+
                 return new JsonResult(new
                 {
                     success = id > 0,
@@ -61,6 +70,11 @@ namespace FUNewsManagementSystem.Pages.Staff
             try
             {
                 bool success = await _tagService.DeleteTag(id);
+                if (success)
+                {
+                    await NotifyDelete<TagDTO>(id); 
+                }
+
                 return new JsonResult(new
                 {
                     success,
@@ -84,6 +98,11 @@ namespace FUNewsManagementSystem.Pages.Staff
             try
             {
                 bool success = await _tagService.UpdateTag(newTag);
+                if (success)
+                {
+                    await NotifyUpdate(newTag); 
+                }
+
                 return new JsonResult(new
                 {
                     success,

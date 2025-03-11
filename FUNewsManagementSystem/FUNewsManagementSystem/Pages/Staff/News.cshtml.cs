@@ -12,6 +12,8 @@ using FUNewsManagementSystem.Helpers;
 using DataAccessLayer.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using FUNewsManagementSystem.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FUNewsManagementSystem.Pages.Staff
 {
@@ -22,9 +24,9 @@ namespace FUNewsManagementSystem.Pages.Staff
         private readonly ITagRepository _tagRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-
-
-        public NewsModel(INewsArticleServices newsArticleServices, ICategoryRepository categoryRepository, ITagRepository tagRepository, IWebHostEnvironment webHostEnvironment)
+        public NewsModel(INewsArticleServices newsArticleServices, ICategoryRepository categoryRepository,
+                         ITagRepository tagRepository, IWebHostEnvironment webHostEnvironment, IHubContext<CrudHub> hubContext)
+                         : base(hubContext)
         {
             _newsArticleServices = newsArticleServices;
             _categoryRepository = categoryRepository;
@@ -34,7 +36,7 @@ namespace FUNewsManagementSystem.Pages.Staff
 
         public List<NewsArticleDTO> NewsArticles { get; set; } = new();
         [BindProperty]
-        public NewsArticleDTO NewsArticle { get; set; } = new ();
+        public NewsArticleDTO NewsArticle { get; set; } = new();
         [BindProperty]
         public IFormFile? ImageFile { get; set; }
 
@@ -42,7 +44,6 @@ namespace FUNewsManagementSystem.Pages.Staff
         public List<SelectListItem> TagList { get; set; } = new();
         [BindProperty]
         public List<int> SelectedTagIds { get; set; } = new();
-
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -54,6 +55,7 @@ namespace FUNewsManagementSystem.Pages.Staff
             TagList = (await _tagRepository.GetTags())
                 .Select(t => new SelectListItem { Value = t.TagId.ToString(), Text = t.TagName })
                 .ToList();
+
             return Page();
         }
 
@@ -80,7 +82,6 @@ namespace FUNewsManagementSystem.Pages.Staff
             }
 
             var user = JsonConvert.DeserializeObject<AccountDTO>(userJson);
-
             var existingNews = await _newsArticleServices.GetNewsByIdAsync(NewsArticle.NewsArticleId);
             if (existingNews == null)
             {
@@ -118,8 +119,8 @@ namespace FUNewsManagementSystem.Pages.Staff
             }
 
             await _newsArticleServices.UpdateNewsAsync(existingNews);
+            await NotifyUpdate(existingNews);
             TempData["SuccessMessage"] = "News updated successfully!";
-
             return RedirectToPage();
         }
 
@@ -132,7 +133,6 @@ namespace FUNewsManagementSystem.Pages.Staff
             }
 
             var userJson = HttpContext.Session.GetString("Account");
-
             if (string.IsNullOrEmpty(userJson))
             {
                 TempData["ErrorMessage"] = "User session expired. Please log in.";
@@ -153,7 +153,7 @@ namespace FUNewsManagementSystem.Pages.Staff
                     {
                         await ImageFile.CopyToAsync(stream);
                     }
-                    NewsArticle.ImgUrl = $"/img/{fileName}"; 
+                    NewsArticle.ImgUrl = $"/img/{fileName}";
                 }
                 catch (Exception ex)
                 {
@@ -163,11 +163,9 @@ namespace FUNewsManagementSystem.Pages.Staff
             }
 
             NewsArticle.Tags = SelectedTagIds.Select(id => new TagDTO { TagId = id }).ToList();
-
             await _newsArticleServices.CreateNewsAsync(NewsArticle);
+            await NotifyCreate(NewsArticle);
             TempData["SuccessMessage"] = "News created successfully!";
-
-
             return RedirectToPage();
         }
 
@@ -179,7 +177,6 @@ namespace FUNewsManagementSystem.Pages.Staff
                 return Page();
             }
 
-
             var news = await _newsArticleServices.GetNewsByIdAsync(id);
             if (news == null)
             {
@@ -187,12 +184,10 @@ namespace FUNewsManagementSystem.Pages.Staff
                 return Page();
             }
 
-
             await _newsArticleServices.DeleteNewsAsync(id);
-
+            await NotifyDelete<NewsArticleDTO>(id); 
             TempData["SuccessMessage"] = "News deleted successfully!";
-            return RedirectToPage(); 
+            return RedirectToPage();
         }
-
     }
 }
