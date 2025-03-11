@@ -42,27 +42,39 @@ namespace DataAccessLayer.Repository
         {
             return await _context.NewsArticles.Include(n => n.Category)
                                               .Include(n => n.Tags)
+                                              .Include(n => n.CreatedBy)
                                               .FirstOrDefaultAsync(n => n.NewsArticleId == newsArticleId);
         }
 
         public async Task AddAsync(NewsArticle newsArticle)
         {
+            newsArticle.CreatedDate = DateTime.UtcNow;
+            newsArticle.ModifiedDate = DateTime.UtcNow;
             await _context.NewsArticles.AddAsync(newsArticle);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(NewsArticle newsArticle)
         {
+            newsArticle.ModifiedDate = DateTime.UtcNow;
             _context.NewsArticles.Update(newsArticle);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(string id)
         {
-            var newsArticle = await GetByIdAsync(id);
+            var newsArticle = await _context.NewsArticles
+                .Include(na => na.Tags)
+                .FirstOrDefaultAsync(na => na.NewsArticleId == id);
+
+            if (newsArticle == null)
+                throw new KeyNotFoundException("News article not found");
+            newsArticle.Tags.Clear();
+            await _context.SaveChangesAsync(); 
             _context.NewsArticles.Remove(newsArticle);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task<IEnumerable<NewsArticle>> SearchAsync(string keyword, short? categoryId, int[]? tagIds)
         {
@@ -85,11 +97,6 @@ namespace DataAccessLayer.Repository
         public async Task<IEnumerable<NewsArticle>> GetNewsHistoryByStaffIdAsync(short staffId)
         {
             return await _context.NewsArticles.Where(n => n.CreatedById == staffId).ToListAsync();
-        }
-
-        public async Task<IEnumerable<NewsArticle>> GetActiveNewsForLecturersAsync()
-        {
-            return await _context.NewsArticles.Where(n => n.NewsStatus == true).ToListAsync();
         }
 
         public async Task<List<NewsArticle>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate)

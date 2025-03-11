@@ -56,6 +56,14 @@ namespace DataAccessLayer.Repository
 
             return await _context.SaveChangesAsync() > 0;
         }
+        public async Task<List<Tag>> GetTagsByIdsAsync(List<int> tagIds)
+        {
+            return await _context.Tags
+                .Where(t => tagIds.Contains(t.TagId))
+                .ToListAsync();
+        }
+
+
     }
 
 }

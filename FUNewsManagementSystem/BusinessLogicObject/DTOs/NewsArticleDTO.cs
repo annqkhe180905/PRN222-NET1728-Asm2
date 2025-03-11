@@ -34,8 +34,7 @@ namespace BusinessLogicLayer.DTOs
         public DateTime? ModifiedDate { get; set; }
 
         public string ImgUrl { get; set; } = string.Empty;
-        public IFormFile? ImageFile { get; set; }
 
-        public List<int>? TagIds { get; set; }
+        public List<TagDTO>? Tags { get; set; }
     }
 }

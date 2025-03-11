@@ -17,7 +17,6 @@ namespace DataAccessLayer.Interfaces
         Task DeleteAsync(string id);
         Task<IEnumerable<NewsArticle>> SearchAsync(string keyword, short? categoryId, int[]? tagIds);
         Task<IEnumerable<NewsArticle>> GetNewsHistoryByStaffIdAsync(short staffId);
-        Task<IEnumerable<NewsArticle>> GetActiveNewsForLecturersAsync();
         Task<List<NewsArticle>> GetNewsByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<int> CountAsync();
         Task<(string AccountName, int Count)> GetTopAccountWithMostNewsAsync();

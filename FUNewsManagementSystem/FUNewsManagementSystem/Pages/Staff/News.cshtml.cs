@@ -9,102 +9,190 @@ using System.Collections.Generic;
 using BusinessLogicLayer.DTOs;
 using BusinessLogicLayer.Interfaces;
 using FUNewsManagementSystem.Helpers;
+using DataAccessLayer.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 namespace FUNewsManagementSystem.Pages.Staff
 {
     public class NewsModel : BasePageModel
     {
-        private readonly INewsArticleServices _newsService;
+        private readonly INewsArticleServices _newsArticleServices;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagRepository _tagRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public List<NewsArticleDTO> NewsList { get; set; } = new();
 
-        public NewsModel(INewsArticleServices newsService, IWebHostEnvironment webHostEnvironment)
+
+        public NewsModel(INewsArticleServices newsArticleServices, ICategoryRepository categoryRepository, ITagRepository tagRepository, IWebHostEnvironment webHostEnvironment)
         {
-            _newsService = newsService;
+            _newsArticleServices = newsArticleServices;
+            _categoryRepository = categoryRepository;
+            _tagRepository = tagRepository;
             _webHostEnvironment = webHostEnvironment;
         }
 
+        public List<NewsArticleDTO> NewsArticles { get; set; } = new();
         [BindProperty]
-        public NewsArticleDTO NewsArticle { get; set; } = new();
+        public NewsArticleDTO NewsArticle { get; set; } = new ();
+        [BindProperty]
+        public IFormFile? ImageFile { get; set; }
 
-        [BindProperty(SupportsGet = false, Name = "newsImage")]
-        public IFormFile? NewsImage { get; set; }
+        public List<SelectListItem> CategoryList { get; set; } = new();
+        public List<SelectListItem> TagList { get; set; } = new();
+        [BindProperty]
+        public List<int> SelectedTagIds { get; set; } = new();
+
 
         public async Task<IActionResult> OnGetAsync()
         {
-            NewsList = await _newsService.GetAllNewsAsync();
+            NewsArticles = (await _newsArticleServices.GetAllNewsAsync()).ToList();
+            CategoryList = (await _categoryRepository.GetAllCategory())
+                .Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.CategoryName })
+                .ToList();
+
+            TagList = (await _tagRepository.GetTags())
+                .Select(t => new SelectListItem { Value = t.TagId.ToString(), Text = t.TagName })
+                .ToList();
             return Page();
         }
 
-        public async Task<IActionResult> OnGetGetNewsAsync(string id)
+        public async Task<JsonResult> OnGetNewsDetail(string id)
         {
-            var news = await _newsService.GetNewsByIdAsync(id);
-            if (news == null)
-            {
-                return NotFound();
-            }
+            var news = await _newsArticleServices.GetNewsByIdAsync(id);
+            if (news == null) return new JsonResult("News not found") { StatusCode = 404 };
             return new JsonResult(news);
-        }
-
-        public async Task<IActionResult> OnPostCreateAsync()
-        {
-            if (NewsArticle == null)
-            {
-                return BadRequest("Invalid news data.");
-            }
-            if (NewsImage != null && NewsImage.Length > 0)
-            {
-                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(NewsImage.FileName)}";
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await NewsImage.CopyToAsync(fileStream);
-                }
-                NewsArticle.ImgUrl = $"/uploads/{fileName}";
-            }
-            await _newsService.CreateNewsAsync(NewsArticle);
-            return new JsonResult(NewsArticle);
         }
 
         public async Task<IActionResult> OnPostUpdateAsync()
         {
-            if (NewsArticle == null || string.IsNullOrEmpty(NewsArticle.NewsArticleId))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid news data.");
+                TempData["ErrorMessage"] = "Failed to update news. Please check your input.";
+                return Page();
             }
-            var existingArticle = await _newsService.GetNewsByIdAsync(NewsArticle.NewsArticleId);
-            if (existingArticle == null)
+            var userJson = HttpContext.Session.GetString("Account");
+
+            if (string.IsNullOrEmpty(userJson))
             {
-                return NotFound("News article not found.");
+                TempData["ErrorMessage"] = "User session expired. Please log in.";
+                return Page();
             }
-            if (NewsImage != null && NewsImage.Length > 0)
+
+            var user = JsonConvert.DeserializeObject<AccountDTO>(userJson);
+
+            var existingNews = await _newsArticleServices.GetNewsByIdAsync(NewsArticle.NewsArticleId);
+            if (existingNews == null)
             {
-                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(NewsImage.FileName)}";
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                TempData["ErrorMessage"] = "News article not found.";
+                return Page();
+            }
+
+            existingNews.UpdatedById = user.AccountId;
+            existingNews.NewsTitle = NewsArticle.NewsTitle;
+            existingNews.Headline = NewsArticle.Headline;
+            existingNews.NewsSource = NewsArticle.NewsSource;
+            existingNews.CategoryId = NewsArticle.CategoryId;
+            existingNews.NewsStatus = NewsArticle.NewsStatus;
+            existingNews.NewsContent = NewsArticle.NewsContent;
+            existingNews.Tags = SelectedTagIds.Select(id => new TagDTO { TagId = id }).ToList();
+
+            if (ImageFile != null)
+            {
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "img", fileName);
+
+                try
                 {
-                    await NewsImage.CopyToAsync(fileStream);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+                    existingNews.ImgUrl = $"/img/{fileName}";
                 }
-                NewsArticle.ImgUrl = $"/uploads/{fileName}";
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Failed to upload image: " + ex.Message;
+                    return Page();
+                }
             }
-            else
-            {
-                NewsArticle.ImgUrl = existingArticle.ImgUrl;
-            }
-            await _newsService.UpdateNewsAsync(NewsArticle);
-            return new JsonResult(NewsArticle);
+
+            await _newsArticleServices.UpdateNewsAsync(existingNews);
+            TempData["SuccessMessage"] = "News updated successfully!";
+
+            return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync([FromBody] string newsId)
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (string.IsNullOrEmpty(newsId))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid ID.");
+                TempData["ErrorMessage"] = "Failed to create news. Please check your input.";
+                return Page();
             }
 
-            await _newsService.DeleteNewsAsync(newsId);
-            return new JsonResult(new { message = "News article deleted successfully." });
+            var userJson = HttpContext.Session.GetString("Account");
+
+            if (string.IsNullOrEmpty(userJson))
+            {
+                TempData["ErrorMessage"] = "User session expired. Please log in.";
+                return Page();
+            }
+
+            var user = JsonConvert.DeserializeObject<AccountDTO>(userJson);
+            NewsArticle.CreatedById = user?.AccountId;
+
+            if (ImageFile != null)
+            {
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "img", fileName);
+
+                try
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+                    NewsArticle.ImgUrl = $"/img/{fileName}"; 
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Failed to upload image: " + ex.Message;
+                    return Page();
+                }
+            }
+
+            NewsArticle.Tags = SelectedTagIds.Select(id => new TagDTO { TagId = id }).ToList();
+
+            await _newsArticleServices.CreateNewsAsync(NewsArticle);
+            TempData["SuccessMessage"] = "News created successfully!";
+
+
+            return RedirectToPage();
         }
+
+        public async Task<IActionResult> OnPostDeleteNewsAsync(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Invalid news ID.";
+                return Page();
+            }
+
+
+            var news = await _newsArticleServices.GetNewsByIdAsync(id);
+            if (news == null)
+            {
+                TempData["ErrorMessage"] = "News not found.";
+                return Page();
+            }
+
+
+            await _newsArticleServices.DeleteNewsAsync(id);
+
+            TempData["SuccessMessage"] = "News deleted successfully!";
+            return RedirectToPage(); 
+        }
+
     }
 }

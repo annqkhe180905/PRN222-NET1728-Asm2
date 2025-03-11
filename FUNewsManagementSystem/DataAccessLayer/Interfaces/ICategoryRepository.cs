@@ -16,5 +16,6 @@ namespace DataAccessLayer.Interfaces
         Task<int> CountAsync();
         Task<(string CategoryName, int Count)> GetTopCategoryUsageAsync();
         Task<List<(string CategoryName, int Count)>> GetListTopCategoriesAsync();
+        Task<Category?> GetCategoryById(short categoryId);
     }
 }

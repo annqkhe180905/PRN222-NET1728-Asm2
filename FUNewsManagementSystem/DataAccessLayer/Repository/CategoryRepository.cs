@@ -90,6 +90,13 @@ namespace DataAccessLayer.Repository
             return topCategoryUse == null ? ("NONE", 0) : (topCategoryUse.Category, topCategoryUse.Count);
         }
 
+        public async Task<Category?> GetCategoryById(short categoryId)
+        {
+            return await _dbContext.Categories
+                .FirstOrDefaultAsync(c => c.CategoryId == categoryId); // ✅ No AsNoTracking() here
+        }
+
+
         public async Task<bool> UpdateAsync(Category updateCategory)
         {
             try

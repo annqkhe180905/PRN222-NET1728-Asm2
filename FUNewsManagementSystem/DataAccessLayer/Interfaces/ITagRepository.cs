@@ -14,5 +14,6 @@ namespace DataAccessLayer.Interfaces
         Task<List<Tag>> GetTags();
         Task<bool> UpdateTag(Tag tag);
         Task<int> CountAsync ();
+        Task<List<Tag>> GetTagsByIdsAsync(List<int> tagIds);
     }
 }
