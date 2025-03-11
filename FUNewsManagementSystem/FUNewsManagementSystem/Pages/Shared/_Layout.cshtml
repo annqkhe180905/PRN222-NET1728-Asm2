@@ -35,13 +35,11 @@
                 }
                 else if (user.AccountRole == 0) // Admin
                 {
-                    <!-- If user is Admin, show Account & Report links -->
                     <a href="/admin/account" class="nav-link text-bold ms-3">Account</a>
                     <a href="/admin/report" class="nav-link text-bold  ms-3">Report</a>
                 }
                 else if (user.AccountRole == 1) // Staff
                 {
-                    <!-- If user is Staff, show Category, NewsTag & News links -->
                     <a href="/staff/category" class="nav-link text-bold ms-3">Category</a>
                     <a href="/staff/newstag" class="nav-link text-bold ms-3">NewsTag</a>
                     <a href="/staff/news" class="nav-link text-bold ms-3">News</a>
@@ -73,7 +71,6 @@
                                 }
                             </div>
 
-                            <!-- Thêm đường dẫn đến trang Profile -->
                             @if (user.AccountRole == 1 )
                             {
                                 <form method="post" class="mt-2">
