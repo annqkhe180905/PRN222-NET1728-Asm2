@@ -2,6 +2,131 @@
 @model FUNewsManagementSystem.Pages.Staff.NewsTagModel
 @{
 }
+
 <div class="container mt-4 container-custom">
-    newstag ne
+    <div class="card card-outside-custom">
+        <div class="card card-custom h-100 p-5">
+            <div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Add Tags</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addForm" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">Tag Name</label>
+                                    <input asp-for="newTag.TagName" id="addTagName" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Note</label>
+                                    <textarea asp-for="newTag.Note" class="form-control"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-danger">Add</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="updateTagModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title">Update Tag</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="updateForm" method="post">
+                                <input asp-for="newTag.TagId" type="hidden" id="updateTagId">
+                                <div class="mb-3">
+                                    <label class="form-label">Tag Name</label>
+                                    <input asp-for="newTag.TagName" id="updateTagName" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea asp-for="newTag.Note" id="updateNote" class="form-control"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-warning">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this tag?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button id="confirmDeleteBtn" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center my-3">
+                <h1 class="fw-bold text-white display-4">Tag Management</h1>
+            </div>
+
+
+            <!-- Search -->
+            <div class="mb-3 d-flex gap-2 w-75">
+                <input type="text" id="searchInput" class="form-control w-75" placeholder="Search tag...">
+                <button class="btn logout-btn rounded-3 px-3 py-2 w-25" data-bs-toggle="modal" data-bs-target="#addTagModal">Add Tag</button>
+
+            </div>
+
+            <!-- Category Table -->
+            <table class="table table-striped table-hover">
+                <thead class="bg-danger text-white">
+                    <tr>
+                        <th style="width: 15%">Name</th>
+                        <th style="width: 55%">Note</th>
+                        <th style="width: 20%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body-tag">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <tr id="row-@tag.TagId">
+                            <td>@tag.TagName</td>
+                            <td>@tag.Note</td>
+
+                            <td>
+                                <i class="btn btn-warning btn-sm bi bi-pencil-square"
+                                   data-id="@tag.TagId"
+                                   data-name="@tag.TagName"
+                                   data-note="@tag.Note"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#updateTagModal">
+
+                                </i>
+                                <i class="btn btn-danger btn-sm btn-delete bi bi-trash-fill" data-id="@tag.TagId">
+
+                                </i>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/tag.js"></script>

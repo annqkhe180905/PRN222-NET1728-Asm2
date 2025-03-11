@@ -8,37 +8,140 @@
             var newsArticles = Model.NewsArticles;
         }
 
-        @for (int i = 0; i < newsArticles.Count; i += 3)
-        {
-            <div class="row mb-4 px-2">
-                @for (int j = i; j < i + 3 && j < newsArticles.Count; j++)
-                {
-                    var news = newsArticles[j];
-                    <div class="col-md-4 d-flex align-items-stretch">
-                        <div class="card card-outside-custom">
-                            <div class="card card-custom h-100">
-                                <img src="@(string.IsNullOrEmpty(news.ImgUrl) ? defaultImage : news.ImgUrl)" class="card-img-top" alt="News Image">
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title text-truncate" style="font-weight: bold; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                        @news.NewsTitle
-                                    </h5>
-                                    <p class="card-text text-truncate" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
-                                        @news.Headline
-                                    </p>
-                                    <p class="card-text text-truncate" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
-                                        @news.NewsContent
-                                    </p>
-                                    <span class="text-muted" style="font-size: 0.9rem;">@news.CreatedDate</span>
+    @for (int i = 0; i < newsArticles.Count; i += 3)
+    {
+        <div class="row mb-4 px-2">
+            @for (int j = i; j < i + 3 && j < newsArticles.Count; j++)
+            {
 
-                                    <div class="mt-2 d-flex justify-content-between">
-                                        <a href="#" class="btn logout-btn">Read More</a>
-                                    </div>
+                var news = newsArticles[j];
+                <div class="col-md-4 d-flex align-items-stretch">
+                    <div class="card card-outside-custom">
+                        <div class="card card-custom h-100">
+                            <img src="@(string.IsNullOrEmpty(news.ImgUrl) ? defaultImage : $"{news.ImgUrl}")" class="card-img-top" alt="News Image">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-truncate" style="font-weight: bold; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    @news.NewsTitle
+                                </h5>
+                                <p class="card-text text-truncate" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
+                                    @news.Headline
+                                </p>
+                                <p class="card-text text-truncate" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">
+                                    @news.NewsContent
+                                </p>
+                                <span class="badge @(news.NewsStatus == true ? "bg-success" : "bg-danger") w-50 p-2 text-lg-center">
+                                    @(news.NewsStatus == true ? "Published" : "Draft")
+                                </span>
+                                <span class="text-muted" style="font-size: 0.9rem;">
+                                    @(news.CreatedDate.HasValue ? news.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm:ss") : "N/A")
+                                </span>
+
+                                <div class="mt-2 d-flex flex-column">
+                                    <button class="btn logout-btn mb-2 p-2" data-bs-toggle="modal" data-bs-target="#readMoreModal" onclick="loadNewsDetail('@news.NewsArticleId')">Read More</button>
+                                  
+
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
-                }
+                </div>
+            }
+        </div>
+    }
+
+    <div class="modal fade" id="readMoreModal" tabindex="-1" aria-labelledby="readMoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="readMoreModalLabel">News Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="detailNewsTitle"></h4>
+                    <p id="detailHeadline"></p>
+                    <p><strong>Category:</strong> <span id="detailCategory"></span></p>
+                    <p><strong>Created By:</strong> <span id="detailCreatedBy"></span></p>
+                    <p><strong>News Source:</strong> <span id="detailNewsSource"></span></p>
+                    <p><strong>Created Date:</strong> <span id="detailCreatedDate" class="text-muted" style="font-size: 0.9rem;"></span></p>
+                    <p><strong>Modified Date:</strong> <span id="detailModifiedDate" class="text-muted" style="font-size: 0.9rem;"></span></p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        <span id="detailNewsStatus" class="status-badge"></span>
+                    </p>
+
+                    <p><strong>Tags:</strong> <span id="detailTags"></span></p>
+
+                    <img id="detailImgUrl" src="" class="img-fluid" alt="News Image">
+
+                    <p id="detailNewsContent"></p>
+                </div>
             </div>
-        }
+        </div>
+    </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("createNewsForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            createNews();
+        });
+
+        document.getElementById("updateNewsForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            updateNews();
+        });
+    });
+    function loadNewsDetail(newsId) {
+        fetch(`?handler=NewsDetail&id=${newsId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("API Response:", data);
+
+                document.getElementById('readMoreModalLabel').innerText = data.newsTitle || "No Title";
+                document.getElementById('detailHeadline').innerText = data.headline || "No Headline";
+                document.getElementById('detailCategory').innerText = data.categoryName || "Uncategorized";
+                document.getElementById('detailCreatedBy').innerText = data.createdBy || "Unknown";
+                document.getElementById('detailNewsSource').innerText = data.newsSource || "Not Available";
+                document.getElementById('detailCreatedDate').innerText = formatDateTime(data.createdDate);
+                document.getElementById('detailModifiedDate').innerText = formatDateTime(data.modifiedDate);
+
+                let statusElement = document.getElementById('detailNewsStatus');
+                if (data.newsStatus) {
+                    statusElement.innerText = "Published";
+                    statusElement.className = "status-badge status-published";
+                } else {
+                    statusElement.innerText = "Draft";
+                    statusElement.className = "status-badge status-draft";
+                }
+
+                let tagNames = (data.tags && data.tags.length > 0)
+                    ? data.tags.map(tag => tag.tagName).join(', ')
+                    : 'None';
+
+                document.getElementById('detailTags').innerText = tagNames;
+
+                document.getElementById('detailImgUrl').src = data.imgUrl ? data.imgUrl : '/img/newsDefault.png';
+                document.getElementById('detailNewsContent').innerText = data.newsContent || "No Content Available";
+            })
+            .catch(error => console.error("Error loading news details:", error));
+    }
+
+    function formatDateTime(dateString) {
+        if (!dateString) return "N/A";
+
+        let date = new Date(dateString);
+
+        let day = String(date.getDate()).padStart(2, '0');
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let year = date.getFullYear();
+
+        let hours = String(date.getHours()).padStart(2, '0');
+        let minutes = String(date.getMinutes()).padStart(2, '0');
+        let seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    }
+</script>
+    

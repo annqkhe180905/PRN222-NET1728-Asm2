@@ -113,7 +113,7 @@ namespace DataAccessLayer.Repository
 
         public async Task<SystemAccount> Login(string email)
         {
-            return await _context.SystemAccounts.FirstOrDefaultAsync(x => x.AccountEmail == email && x.Status == true);
+            return await _context.SystemAccounts.FirstOrDefaultAsync(x => x.AccountEmail == email && x.Status== true);
         }
     }
 }
